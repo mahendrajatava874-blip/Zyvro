@@ -1,288 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090b16">
-  <title>Zyvro — Play Beyond</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #090b16;
-      color: #f5f5ff;
-    }
-    header {
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #292b40;
-    }
-    .logo { font-size: 27px; font-weight: 900; color: #a78bfa; }
-    .tag { color: #a8adc8; font-size: 12px; margin-top: 4px; }
-    .profile {
-      border: 1px solid #393752;
-      border-radius: 30px;
-      padding: 9px 12px;
-      background: #17182a;
-    }
-    main { max-width: 900px; margin: auto; padding: 22px 16px; }
-    .hero {
-      padding: 26px 20px;
-      border-radius: 22px;
-      background: linear-gradient(135deg, #26204a, #131b35 60%, #142d3a);
-      border: 1px solid #343052;
-    }
-    .hero h1 { font-size: 34px; margin: 8px 0; }
-    .hero p { color: #c4c7dc; line-height: 1.6; }
-    .pill {
-      color: #c4b5fd;
-      font-size: 12px;
-      letter-spacing: 2px;
-      font-weight: bold;
-    }
-    .section-title { margin: 28px 0 14px; font-size: 21px; }
-    .games {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 13px;
-    }
-    .game {
-      padding: 17px 13px;
-      text-align: left;
-      border-radius: 17px;
-      color: white;
-      background: #151729;
-      border: 1px solid #30334d;
-      cursor: pointer;
-    }
-    .game:active { transform: scale(.98); }
-    .emoji { font-size: 34px; }
-    .game h3 { margin: 12px 0 6px; }
-    .game p { color: #aeb3ce; font-size: 13px; line-height: 1.5; }
-    .play {
-      border: 0;
-      background: #8b5cf6;
-      color: white;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-weight: bold;
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 9px;
-      margin-top: 20px;
-    }
-    .stat {
-      background: #141628;
-      border: 1px solid #292c42;
-      border-radius: 13px;
-      padding: 13px 8px;
-      text-align: center;
-    }
-    .stat strong { display: block; font-size: 20px; color: #c4b5fd; }
-    .stat span { font-size: 11px; color: #aeb3ce; }
-    #message {
-      display: none;
-      padding: 16px;
-      margin-top: 16px;
-      background: #20203b;
-      border-radius: 14px;
-      border: 1px solid #6850a7;
-      line-height: 1.6;
-    }
-    footer { text-align: center; padding: 28px 12px; color: #878ca8; font-size: 12px; }
-    @media (min-width: 650px) {
-      .games { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      .hero h1 { font-size: 44px; }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div>
-      <div class="logo">ZYVRO<span style="color:#22d3ee">.</span></div>
-      <div class="tag">PLAY BEYOND LIMITS</div>
-    </div>
-    <div class="profile">🎮 Guest Player</div>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div class="pill">YOUR NEXT GAME STARTS HERE</div>
-      <h1>Ready to Play?</h1>
-      <p>Discover quick challenges, test your skills and collect virtual points. Your adventure starts now.</p>
-      <button class="play" onclick="showGame('Welcome to Zyvro! Choose a game below to begin.')">Explore Games ↗</button>
-    </section>
-
-    <div class="stats">
-      <div class="stat"><strong id="points">0</strong><span>VIRTUAL POINTS</span></div>
-      <div class="stat"><strong id="level">1</strong><span>PLAYER LEVEL</span></div>
-      <div class="stat"><strong>4</strong><span>GAMES TO EXPLORE</span></div>
-    </div>
-
-    <h2 class="section-title">🎯 Choose Your Challenge</h2>
-    <section class="games">
-      <button class="game" onclick="redGreen()">
-        <div class="emoji">🚦</div><h3>Red / Green</h3>
-        <p>Stop or go? Test your timing.</p><span class="play">Play</span>
-      </button>
-      <button class="game" onclick="quiz()">
-        <div class="emoji">🧠</div><h3>Brain Quiz</h3>
-        <p>Answer a quick brain teaser.</p><span class="play">Play</span>
-      </button>
-      <button class="game" onclick="tapGame()">
-        <div class="emoji">⚡</div><h3>Tap Rush</h3>
-        <p>Tap fast and beat the clock.</p><span class="play">Play</span>
-      </button>
-      <button class="game" onclick="memoryGame()">
-        <div class="emoji">🃏</div><h3>Memory Match</h3>
-        <p>Remember the matching symbols.</p><span class="play">Play</span>
-      </button>
-    </section>
-
-    <section id="message" aria-live="polite"></section>
-  </main>
-
-  <footer>ZYVRO © 2026 · Play fair · Have fun</footer>
-
-  <script>
-    let points = 0;
-    let level = 1;
-    let audioOn = true;
-    let audio;
-    function sound(freq = 500) {
-      if (!audioOn) return;
-      try {
-        audio = audio || new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audio.createOscillator();
-        const gain = audio.createGain();
-        osc.frequency.value = freq;
-        gain.gain.value = 0.06;
-        osc.connect(gain);
-        gain.connect(audio.destination);
-        osc.start();
-        osc.stop(audio.currentTime + 0.12);
-      } catch (e) {}
-    }
-    function showGame(html) {
-      const box = document.getElementById('message');
-      box.style.display = 'block';
-      box.innerHTML = html;
-      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-    function reward(n) {
-      points += n;
-      level = Math.floor(points / 50) + 1;
-      document.getElementById('points').textContent = points;
-      document.getElementById('level').textContent = level;
-      sound(700);
-    }
-    function redGreen() {
-      showGame('<h3>🚦 Red / Green Rush</h3><p>Press GO to earn virtual points. Stop when the light is red!</p><div id="light" style="font-size:40px">🔴</div><button class="play" onclick="rushGo()">GO!</button> <button class="play" onclick="rushStop()">STOP</button><p id="rushText">Wait for green...</p>');
-      window.rushGreen = false;
-      setTimeout(() => {
-        if (document.getElementById('light')) {
-          window.rushGreen = true;
-          document.getElementById('light').textContent = '🟢';
-          document.getElementById('rushText').textContent = 'Green! Press GO!';
-          sound(800);
-        }
-      }, 1800);
-    }
-    function rushGo() {
-      if (window.rushGreen) {
-        reward(10);
-        document.getElementById('rushText').textContent = 'Great timing! +10 points';
-        window.rushGreen = false;
-      } else {
-        document.getElementById('rushText').textContent = 'Too early! Wait for green and try again.';
-        sound(180);
-      }
-    }
-    function rushStop() {
-      document.getElementById('rushText').textContent = 'Round stopped. Start Red / Green again to replay.';
-      window.rushGreen = false;
-    }
-    function quiz() {
-      showGame('<h3>🧠 Brain Quiz</h3><p>What is 7 × 8?</p><button class="play" onclick="answer(54)">54</button> <button class="play" onclick="answer(56)">56</button> <button class="play" onclick="answer(64)">64</button><p id="quizText"></p>');
-    }
-    function answer(n) {
-      const el = document.getElementById('quizText');
-      if (n === 56) {
-        el.textContent = 'Correct! +10 virtual points';
-        reward(10);
-      } else {
-        el.textContent = 'Not quite. Try another game!';
-        sound(180);
-      }
-    }
-    function tapGame() {
-      showGame('<h3>⚡ Tap Rush</h3><p>Tap the button as many times as you can in 5 seconds!</p><button class="play" onclick="tapStart()">Start 5-second challenge</button><p id="tapText"></p>');
-    }
-    function tapStart() {
-      let count = 0;
-      let ended = false;
-      showGame('<h3>⚡ Tap Rush</h3><p>Time left: <b id="time">5</b> seconds</p><button class="play" id="tapButton">TAP!</button><p id="tapText">Taps: 0</p>');
-      const btn = document.getElementById('tapButton');
-      btn.onclick = () => {
-        if (!ended) { count++; document.getElementById('tapText').textContent = 'Taps: ' + count; sound(400 + count * 10); }
-      };
-      const until = Date.now() + 5000;
-      const timer = setInterval(() => {
-        if (!document.getElementById('time')) { clearInterval(timer); return; }
-        const left = Math.max(0, Math.ceil((until - Date.now()) / 1000));
-        document.getElementById('time').textContent = left;
-        if (left <= 0) {
-          clearInterval(timer);
-          ended = true;
-          reward(count);
-          document.getElementById('tapText').textContent = 'Finished! ' + count + ' taps. +' + count + ' points';
-        }
-      }, 150);
-    }
-    function memoryGame() {
-      const symbols = ['🍒','⭐','🍋','⭐','🍋','🍒'];
-      showGame('<h3>🃏 Memory Match</h3><p>Find the two matching symbols!</p><div id="cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><p id="memoryText">Choose two cards.</p>');
-      const deck = symbols.sort(() => Math.random() - 0.5);
-      let picks = [];
-      let matched = [];
-      const area = document.getElementById('cards');
-      deck.forEach((symbol, i) => {
-        const b = document.createElement('button');
-        b.className = 'play';
-        b.style.minHeight = '55px';
-        b.textContent = '❔';
-        b.onclick = () => {
-          if (matched.includes(i) || picks.includes(i) || picks.length === 2) return;
-          b.textContent = symbol;
-          picks.push(i);
-          if (picks.length === 2) {
-            const [a, c] = picks;
-            if (deck[a] === deck[c]) {
-              matched.push(a, c);
-              document.getElementById('memoryText').textContent = 'Match found! +10 points';
-              reward(10);
-              picks = [];
-            } else {
-              document.getElementById('memoryText').textContent = 'Not a match. Try again.';
-              setTimeout(() => {
-                if (area.isConnected) {
-                  area.children[a].textContent = '❔';
-                  area.children[c].textContent = '❔';
-                }
-                picks = [];
-              }, 650);
-            }
-          }
-        };
-        area.appendChild(b);
-      });
-    }
-  </script>
-</body>
-  </html>
-                                              
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090d18"><title>Zyvro — Play Beyond Limits</title>
+<style>
+:root{--bg:#090d18;--card:#121b2e;--line:#293650;--text:#f5f7ff;--muted:#a3afc8;--purple:#a78bfa;--cyan:#67e8f9}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0,#27204b,transparent 36%),radial-gradient(ellipse at 100% 20%,#103441,transparent 30%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{max-width:1080px;margin:auto;padding:0 17px}.nav{height:68px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff12}.logo{font-weight:950;font-size:23px;letter-spacing:-1px}.logo b{color:var(--cyan)}.user{border:1px solid var(--line);background:#151c2d;border-radius:999px;padding:8px 12px;font-size:13px}.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:15px;padding:26px 0 18px}.mainhero,.quest,.stat,.game,.panel{border:1px solid var(--line);border-radius:23px;background:linear-gradient(145deg,#191b3b,#121d30 75%,#10313a)}.mainhero{padding:clamp(22px,4vw,40px)}.eyebrow{font-size:11px;letter-spacing:2px;font-weight:900;color:var(--cyan)}h1{font-size:clamp(38px,6vw,60px);line-height:1.02;letter-spacing:-2.5px;margin:17px 0}h1 span{background:linear-gradient(90deg,var(--purple),var(--cyan));color:transparent;background-clip:text}.mainhero p{color:#c0c9dd;line-height:1.65;font-size:15px;max-width:510px}.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:850;margin:5px 6px 0 0;background:linear-gradient(100deg,#9c7cff,#7066ff);color:white}.btn.alt{background:#ffffff0c;border:1px solid #ffffff22}.quest{padding:20px;background:linear-gradient(145deg,#151d32,#0f1929);display:flex;flex-direction:column;justify-content:space-between}.row{display:flex;justify-content:space-between;align-items:center}.small{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:1px}.badge{font-size:11px;color:#fcd34d;background:#fcd34d12;border:1px solid #fcd34d35;border-radius:99px;padding:7px}.mascot{text-align:center;font-size:68px;margin:14px}.quest h3{margin:0 0 6px}.quest p,.game p{font-size:12px;color:var(--muted);line-height:1.5}.bar{height:7px;background:#28334b;border-radius:99px;overflow:hidden;margin:13px 0 7px}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--cyan))}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 28px}.stat{padding:15px;display:flex;gap:11px;align-items:center;background:#111827}.icon{height:40px;width:40px;display:grid;place-items:center;border-radius:13px;background:#a78bfa18;font-size:20px}.stat strong{font-size:21px;display:block}.stat small{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:.6px}.heading{margin:30px 0 15px}.heading h2{margin:0;font-size:25px;letter-spacing:-.6px}.heading p{color:var(--muted);font-size:12px;margin:5px 0}.games{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.game{padding:15px;text-align:left;color:var(--text);cursor:pointer;min-height:210px;background:linear-gradient(150deg,#19233a,#101625);transition:.2s}.game:hover{transform:translateY(-3px);border-color:#9b8aff}.art{text-align:center;font-size:45px;height:72px;display:grid;place-items:center}.tag{font-size:9px;font-weight:900;letter-spacing:1px;color:var(--cyan)}.game h3{font-size:16px;margin:7px 0}.play{font-size:11px;font-weight:900;display:flex;justify-content:space-between;margin-top:12px}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:25px 0 38px}.panel{padding:19px;background:#111827}.panel h3{margin:0 0 14px}.leader{display:flex;align-items:center;gap:10px;border-bottom:1px solid #ffffff10;padding:9px 0;font-size:12px}.leader:last-child{border:0}.leader span:nth-child(2){flex:1}.leader b{color:var(--cyan)}footer{border-top:1px solid #ffffff12;color:#7d8aa4;font-size:11px;padding:22px 0 30px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.modal{position:fixed;inset:0;background:#030611df;display:none;align-items:center;justify-content:center;padding:15px;z-index:5}.modal.show{display:flex}.box{width:min(500px,100%);background:#111b2d;border:1px solid #34415d;border-radius:22px;padding:20px}.boxhead{display:flex;justify-content:space-between;align-items:center}.box h2{margin:0}.close,.choice{background:#202b44;border:1px solid #34415d;border-radius:11px;padding:10px;color:white}.area{margin:15px 0;padding:15px;text-align:center;border-radius:15px;background:#090f1e;border:1px solid #283650;min-height:135px}.area p{font-size:13px;color:var(--muted)}.choice{margin:4px;cursor:pointer}.message{color:#86efac;min-height:22px;font-size:13px;font-weight:800}
+@media(max-width:720px){.hero{grid-template-columns:1fr}.games{grid-template-columns:repeat(2,minmax(0,1fr))}.bottom{grid-template-columns:1fr}.quest{min-height:230px}.stats{gap:7px}.stat{padding:10px 7px;gap:6px}.icon{width:31px;height:31px}.stat strong{font-size:18px}.stat small{font-size:8px}.user{font-size:11px}}@media(max-width:360px){.wrap{padding:0 11px}.games{gap:8px}.game{padding:11px}.stats{grid-template-columns:1fr}.stat{padding:10px}}
+</style></head><body>
+<header><div class="wrap nav"><div class="logo">✦ ZYVRO<b>.</b></div><div class="user">🎮 Guest Player</div></div></header>
+<main class="wrap">
+<section class="hero"><div class="mainhero"><div class="eyebrow">✦ YOUR NEXT MINI-ADVENTURE</div><h1>Play smart.<br><span>Have more fun.</span></h1><p>Quick games, brainy challenges and friendly high scores. Jump in for a round, sharpen your skills and collect virtual XP — just for fun.</p><button class="btn" onclick="document.querySelector('#arena').scrollIntoView({behavior:'smooth'})">Explore the Arena ↗</button><button class="btn alt" onclick="daily()">🎯 Daily challenge</button></div>
+<aside class="quest"><div class="row"><span class="small">TODAY'S QUEST</span><span class="badge">✦ DAILY XP</span></div><div class="mascot">🪄</div><div><h3>Make this round count</h3><p>Play mini-games to earn demo XP and build your streak.</p><div class="bar"><span id="qbar"></span></div><div class="small" id="qtext">0 / 3 rounds played</div></div></aside></section>
+<section class="stats"><div class="stat"><div class="icon">⚡</div><div><strong id="xp">0</strong><small>VIRTUAL XP</small></div></div><div class="stat"><div class="icon">🏅</div><div><strong id="level">1</strong><small>PLAYER LEVEL</small></div></div><div class="stat"><div class="icon">🎮</div><div><strong>04</strong><small>MINI-GAMES</small></div></div></section>
+<section id="arena"><div class="heading"><h2>Choose your next game</h2><p>Quick to learn. Fun to replay. No money, no betting.</p></div><div class="games">
+<button class="game" onclick="play('signal')"><div class="art">🚦</div><div class="tag">REFLEX · TIMING</div><h3>Signal Sprint</h3><p>Wait for green, then tap fast. Avoid the false start.</p><div class="play">Play round <span>↗</span></div></button>
+<button class="game" onclick="play('quiz')"><div class="art">🧠</div><div class="tag">BRAIN · QUIZ</div><h3>Brain Blitz</h3><p>Answer three quick questions and test your knowledge.</p><div class="play">Play round <span>↗</span></div></button>
+<button class="game" onclick="play('tap')"><div class="art">🎯</div><div class="tag">SPEED · 10 SEC</div><h3>Tap Storm</h3><p>Tap the target as often as you can before time runs out.</p><div class="play">Play round <span>↗</span></div></button>
+<button class="game" onclick="play('memory')"><div class="art">🃏</div><div class="tag">MEMORY · MATCH</div><h3>Pair Quest</h3><p>Find all matching symbols and train your memory.</p><div class="play">Play round <span>↗</span></div></button>
+</div></section>
+<section class="bottom"><div class="panel"><h3>🎯 Daily mission</h3><b style="font-size:13px">Play 3 rounds today</b><p style="color:var(--muted);font-size:12px">Finish a few rounds to make progress.</p><div class="bar"><span id="mbar"></span></div><small style="color:var(--muted)">Progress is saved only in this browser.</small></div><div class="panel"><h3>🏆 Friendly leaderboard</h3><div class="leader">01 <span>🦊 PixelFox <small>· demo</small></span><b>840 XP</b></div><div class="leader">02 <span>🐼 NovaPanda <small>· demo</small></span><b>720 XP</b></div><div class="leader">03 <span>🦄 LunaDash <small>· demo</small></span><b>610 XP</b></div></div></section>
+</main><footer class="wrap"><span>© 2026 ZYVRO · Play fair. Have fun.</span><span>Virtual XP only · No betting or cash prizes</span></footer>
+<div class="modal" id="modal"><div class="box"><div class="boxhead"><h2 id="title">Mini game</h2><button class="close" onclick="closeGame()">✕</button></div><div class="area" id="area"></div><div class="message" id="msg"></div><div style="text-align:right"><button class="btn alt" onclick="closeGame()">Back to arena</button></div></div></div>
+<script>
+let xp=+(localStorage.getItem('zyvro_xp')||0),rounds=+(localStorage.getItem('zyvro_rounds')||0),timer=null,audio=null,first=null,matched=0,locked=false;
+function stats(){document.getElementById('xp').textContent=xp;document.getElementById('level').textContent=Math.floor(xp/100)+1;let w=Math.min(100,rounds/3*100)+'%';document.getElementById('qbar').style.width=w;document.getElementById('mbar').style.width=w;document.getElementById('qtext').textContent=Math.min(3,rounds)+' / 3 rounds played';localStorage.setItem('zyvro_xp',xp);localStorage.setItem('zyvro_rounds',rounds)}
+function beep(f=520){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;g.gain.value=.04;o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.09)}catch(e){}}
+function daily(){alert('Daily mission: play any 3 rounds. Earn virtual XP only!');document.querySelector('#arena').scrollIntoView({behavior:'smooth'})}
+function open(t,h){document.getElementById('title').textContent=t;document.getElementById('area').innerHTML=h;document.getElementById('msg').textContent='';document.getElementById('modal').classList.add('show')}
+function closeGame(){clearTimeout(timer);clearInterval(timer);timer=null;document.getElementById('modal').classList.remove('show');locked=false}
+function finish(n,text){clearTimeout(timer);clearInterval(timer);timer=null;xp+=n;rounds++;stats();document.getElementById('msg').textContent=text+' +'+n+' XP';beep(760)}
+function play(type){beep();if(type==='signal')signal();if(type==='quiz')quiz();if(type==='tap')tap();if(type==='memory')memory()}
+function signal(){open('🚦 Signal Sprint','<p id="hint">Wait for green. Do not tap early!</p><div id="light" style="font-size:58px">🔴</div><button class="btn" id="go">Wait…</button>');let ready=false,ended=false;document.getElementById('go').onclick=()=>{if(ended)return;if(!ready){ended=true;document.getElementById('hint').textContent='False start! Try again.';document.getElementById('go').textContent='Restart';document.getElementById('go').onclick=signal;beep(170);return}ended=true;document.getElementById('hint').textContent='Great reaction!';finish(10,'Nice timing!')};timer=setTimeout(()=>{if(!ended){ready=true;document.getElementById('light').textContent='🟢';document.getElementById('hint').textContent='GO! Tap now!';document.getElementById('go').textContent='TAP NOW';beep(850)}},1200+Math.random()*2200)}
+const questions=[['Which planet is called the Red Planet?',['Mars','Venus','Jupiter'],0],['How many sides has a hexagon?',['Five','Six','Eight'],1],['What is 9 × 7?',['56','63','72'],1],['Which is the largest ocean?',['Atlantic','Indian','Pacific'],2],['Which animal is a mammal?',['Shark','Dolphin','Trout'],1]];
+let qi=0,score=0;
+function quiz(){qi=0;score=0;question()}
+function question(){if(qi===3){open('🧠 Brain Blitz','<h3>Quiz complete!</h3><p>You got '+score+' out of 3 correct.</p><button class="btn" onclick="finish('+(5+score*15)+',\\'Brain Blitz complete!\\')">Collect XP</button>');return}let q=questions[Math.random()*questions.length|0];open('🧠 Brain Blitz','<p>Question '+(qi+1)+' of 3</p><h3>'+q[0]+'</h3>'+q[1].map((a,i)=>'<button class="choice" data-i="'+i+'">'+a+'</button>').join(''));document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{if(b.disabled)return;document.querySelectorAll('.choice').forEach(x=>x.disabled=true);if(+b.dataset.i===q[2]){score++;beep(700);document.getElementById('msg').textContent='Correct!'}else{beep(180);document.getElementById('msg').textContent='Not quite — keep going.'}qi++;timer=setTimeout(question,600)})}
+function tap(){let n=0,t=10;open('🎯 Tap Storm','<p>Tap as often as you can in 10 seconds.</p><h2 id="count" style="font-size:38px">0</h2><button class="btn" id="target" style="font-size:22px">🎯 TAP!</button><p id="time">10 seconds left</p>');document.getElementById('target').onclick=()=>{if(t<=0)return;n++;document.getElementById('count').textContent=n;beep(300+Math.min(n*9,400))};timer=setInterval(()=>{t--;document.getElementById('time').textContent=t+' seconds left';if(t<=0){clearInterval(timer);timer=null;document.getElementById('target').disabled=true;finish(Math.min(50,n*2),'Tap Storm complete!')}},1000)}
+function memory(){let arr=['🌙','⭐','🍀','🔥','🌙','⭐','🍀','🔥'].sort(()=>Math.random()-.5);first=null;matched=0;locked=false;open('🃏 Pair Quest','<p>Find all 4 pairs.</p><div id="grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px">'+arr.map((v,i)=>'<button class="choice" data-v="'+v+'" style="height:52px;font-size:22px">❔</button>').join('')+'</div>');document.querySelectorAll('#grid button').forEach(b=>b.onclick=()=>{if(locked||b.dataset.done||b.textContent!=='❔')return;b.textContent=b.dataset.v;beep();if(!first){first=b;return}if(first.dataset.v===b.dataset.v){first.dataset.done='1';b.dataset.done='1';first=null;matched++;if(matched===4)finish(40,'All pairs found!')}else{locked=true;let prev=first;first=null;timer=setTimeout(()=>{prev.textContent='❔';b.textContent='❔';locked=false},650)}})}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeGame()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGame()});stats();
+</script></body></html>
