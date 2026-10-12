@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b16">
+  <title>Zyvro — Play Beyond</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #090b16;
+      color: #f5f5ff;
+    }
+    header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #292b40;
+    }
+    .logo { font-size: 27px; font-weight: 900; color: #a78bfa; }
+    .tag { color: #a8adc8; font-size: 12px; margin-top: 4px; }
+    .profile {
+      border: 1px solid #393752;
+      border-radius: 30px;
+      padding: 9px 12px;
+      background: #17182a;
+    }
+    main { max-width: 900px; margin: auto; padding: 22px 16px; }
+    .hero {
+      padding: 26px 20px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #26204a, #131b35 60%, #142d3a);
+      border: 1px solid #343052;
+    }
+    .hero h1 { font-size: 34px; margin: 8px 0; }
+    .hero p { color: #c4c7dc; line-height: 1.6; }
+    .pill {
+      color: #c4b5fd;
+      font-size: 12px;
+      letter-spacing: 2px;
+      font-weight: bold;
+    }
+    .section-title { margin: 28px 0 14px; font-size: 21px; }
+    .games {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+    .game {
+      padding: 17px 13px;
+      text-align: left;
+      border-radius: 17px;
+      color: white;
+      background: #151729;
+      border: 1px solid #30334d;
+      cursor: pointer;
+    }
+    .game:active { transform: scale(.98); }
+    .emoji { font-size: 34px; }
+    .game h3 { margin: 12px 0 6px; }
+    .game p { color: #aeb3ce; font-size: 13px; line-height: 1.5; }
+    .play {
+      border: 0;
+      background: #8b5cf6;
+      color: white;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: bold;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 20px;
+    }
+    .stat {
+      background: #141628;
+      border: 1px solid #292c42;
+      border-radius: 13px;
+      padding: 13px 8px;
+      text-align: center;
+    }
+    .stat strong { display: block; font-size: 20px; color: #c4b5fd; }
+    .stat span { font-size: 11px; color: #aeb3ce; }
+    #message {
+      display: none;
+      padding: 16px;
+      margin-top: 16px;
+      background: #20203b;
+      border-radius: 14px;
+      border: 1px solid #6850a7;
+      line-height: 1.6;
+    }
+    footer { text-align: center; padding: 28px 12px; color: #878ca8; font-size: 12px; }
+    @media (min-width: 650px) {
+      .games { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .hero h1 { font-size: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">ZYVRO<span style="color:#22d3ee">.</span></div>
+      <div class="tag">PLAY BEYOND LIMITS</div>
+    </div>
+    <div class="profile">🎮 Guest Player</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="pill">YOUR NEXT GAME STARTS HERE</div>
+      <h1>Ready to Play?</h1>
+      <p>Discover quick challenges, test your skills and collect virtual points. Your adventure starts now.</p>
+      <button class="play" onclick="showGame('Welcome to Zyvro! Choose a game below to begin.')">Explore Games ↗</button>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><strong id="points">0</strong><span>VIRTUAL POINTS</span></div>
+      <div class="stat"><strong id="level">1</strong><span>PLAYER LEVEL</span></div>
+      <div class="stat"><strong>4</strong><span>GAMES TO EXPLORE</span></div>
+    </div>
+
+    <h2 class="section-title">🎯 Choose Your Challenge</h2>
+    <section class="games">
+      <button class="game" onclick="redGreen()">
+        <div class="emoji">🚦</div><h3>Red / Green</h3>
+        <p>Stop or go? Test your timing.</p><span class="play">Play</span>
+      </button>
+      <button class="game" onclick="quiz()">
+        <div class="emoji">🧠</div><h3>Brain Quiz</h3>
+        <p>Answer a quick brain teaser.</p><span class="play">Play</span>
+      </button>
+      <button class="game" onclick="tapGame()">
+        <div class="emoji">⚡</div><h3>Tap Rush</h3>
+        <p>Tap fast and beat the clock.</p><span class="play">Play</span>
+      </button>
+      <button class="game" onclick="memoryGame()">
+        <div class="emoji">🃏</div><h3>Memory Match</h3>
+        <p>Remember the matching symbols.</p><span class="play">Play</span>
+      </button>
+    </section>
+
+    <section id="message" aria-live="polite"></section>
+  </main>
+
+  <footer>ZYVRO © 2026 · Play fair · Have fun</footer>
+
+  <script>
+    let points = 0;
+    let level = 1;
+    let audioOn = true;
+    let audio;
+    function sound(freq = 500) {
+      if (!audioOn) return;
+      try {
+        audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audio.createOscillator();
+        const gain = audio.createGain();
+        osc.frequency.value = freq;
+        gain.gain.value = 0.06;
+        osc.connect(gain);
+        gain.connect(audio.destination);
+        osc.start();
+        osc.stop(audio.currentTime + 0.12);
+      } catch (e) {}
+    }
+    function showGame(html) {
+      const box = document.getElementById('message');
+      box.style.display = 'block';
+      box.innerHTML = html;
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function reward(n) {
+      points += n;
+      level = Math.floor(points / 50) + 1;
+      document.getElementById('points').textContent = points;
+      document.getElementById('level').textContent = level;
+      sound(700);
+    }
+    function redGreen() {
+      showGame('<h3>🚦 Red / Green Rush</h3><p>Press GO to earn virtual points. Stop when the light is red!</p><div id="light" style="font-size:40px">🔴</div><button class="play" onclick="rushGo()">GO!</button> <button class="play" onclick="rushStop()">STOP</button><p id="rushText">Wait for green...</p>');
+      window.rushGreen = false;
+      setTimeout(() => {
+        if (document.getElementById('light')) {
+          window.rushGreen = true;
+          document.getElementById('light').textContent = '🟢';
+          document.getElementById('rushText').textContent = 'Green! Press GO!';
+          sound(800);
+        }
+      }, 1800);
+    }
+    function rushGo() {
+      if (window.rushGreen) {
+        reward(10);
+        document.getElementById('rushText').textContent = 'Great timing! +10 points';
+        window.rushGreen = false;
+      } else {
+        document.getElementById('rushText').textContent = 'Too early! Wait for green and try again.';
+        sound(180);
+      }
+    }
+    function rushStop() {
+      document.getElementById('rushText').textContent = 'Round stopped. Start Red / Green again to replay.';
+      window.rushGreen = false;
+    }
+    function quiz() {
+      showGame('<h3>🧠 Brain Quiz</h3><p>What is 7 × 8?</p><button class="play" onclick="answer(54)">54</button> <button class="play" onclick="answer(56)">56</button> <button class="play" onclick="answer(64)">64</button><p id="quizText"></p>');
+    }
+    function answer(n) {
+      const el = document.getElementById('quizText');
+      if (n === 56) {
+        el.textContent = 'Correct! +10 virtual points';
+        reward(10);
+      } else {
+        el.textContent = 'Not quite. Try another game!';
+        sound(180);
+      }
+    }
+    function tapGame() {
+      showGame('<h3>⚡ Tap Rush</h3><p>Tap the button as many times as you can in 5 seconds!</p><button class="play" onclick="tapStart()">Start 5-second challenge</button><p id="tapText"></p>');
+    }
+    function tapStart() {
+      let count = 0;
+      let ended = false;
+      showGame('<h3>⚡ Tap Rush</h3><p>Time left: <b id="time">5</b> seconds</p><button class="play" id="tapButton">TAP!</button><p id="tapText">Taps: 0</p>');
+      const btn = document.getElementById('tapButton');
+      btn.onclick = () => {
+        if (!ended) { count++; document.getElementById('tapText').textContent = 'Taps: ' + count; sound(400 + count * 10); }
+      };
+      const until = Date.now() + 5000;
+      const timer = setInterval(() => {
+        if (!document.getElementById('time')) { clearInterval(timer); return; }
+        const left = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+        document.getElementById('time').textContent = left;
+        if (left <= 0) {
+          clearInterval(timer);
+          ended = true;
+          reward(count);
+          document.getElementById('tapText').textContent = 'Finished! ' + count + ' taps. +' + count + ' points';
+        }
+      }, 150);
+    }
+    function memoryGame() {
+      const symbols = ['🍒','⭐','🍋','⭐','🍋','🍒'];
+      showGame('<h3>🃏 Memory Match</h3><p>Find the two matching symbols!</p><div id="cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><p id="memoryText">Choose two cards.</p>');
+      const deck = symbols.sort(() => Math.random() - 0.5);
+      let picks = [];
+      let matched = [];
+      const area = document.getElementById('cards');
+      deck.forEach((symbol, i) => {
+        const b = document.createElement('button');
+        b.className = 'play';
+        b.style.minHeight = '55px';
+        b.textContent = '❔';
+        b.onclick = () => {
+          if (matched.includes(i) || picks.includes(i) || picks.length === 2) return;
+          b.textContent = symbol;
+          picks.push(i);
+          if (picks.length === 2) {
+            const [a, c] = picks;
+            if (deck[a] === deck[c]) {
+              matched.push(a, c);
+              document.getElementById('memoryText').textContent = 'Match found! +10 points';
+              reward(10);
+              picks = [];
+            } else {
+              document.getElementById('memoryText').textContent = 'Not a match. Try again.';
+              setTimeout(() => {
+                if (area.isConnected) {
+                  area.children[a].textContent = '❔';
+                  area.children[c].textContent = '❔';
+                }
+                picks = [];
+              }, 650);
+            }
+          }
+        };
+        area.appendChild(b);
+      });
+    }
+  </script>
+</body>
+  </html>
+                                              
