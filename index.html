@@ -92,5 +92,89 @@ function findMatches(){let set=new Set();for(let r=0;r<8;r++)for(let c=0;c<8;c++
 function tapCandy(i){sfx('tap');if(candyBusy||candyMoves<=0||candyScore>=500)return;if(firstCandy===null){firstCandy=i;renderCandy();return}let a=firstCandy,b=i;firstCandy=null;if(a===b){renderCandy();return}if(Math.abs(Math.floor(a/8)-Math.floor(b/8))+Math.abs(a%8-b%8)!==1){firstCandy=b;renderCandy();return}[candies[a],candies[b]]=[candies[b],candies[a]];let matches=findMatches();if(!matches.size){[candies[a],candies[b]]=[candies[b],candies[a]];$('candyMessage').textContent='No match — try another swap.';renderCandy();return}candyMoves--;candyBusy=true;function clearLoop(){let m=findMatches();if(!m.size){candyBusy=false;renderCandy();if(candyScore>=500){$('candyMessage').textContent='Level complete! You reached 500 points!';sfx('win');updateXP(25)}else if(candyMoves<=0)$('candyMessage').textContent='Out of moves! Try again.';return}candyScore+=m.size*10;sfx('match');m.forEach(k=>candies[k]=-1);for(let c=0;c<8;c++){let vals=[];for(let r=7;r>=0;r--)if(candies[r*8+c]!==-1)vals.push(candies[r*8+c]);while(vals.length<8)vals.push(Math.floor(Math.random()*6));for(let r=7;r>=0;r--)candies[r*8+c]=vals[7-r]}renderCandy();setTimeout(clearLoop,180)}renderCandy();setTimeout(clearLoop,180)}
 newBlockGame();newWaterGame();newCandyGame();
 </script>
-</body>
+<!-- ZYVRO WINGO ADD-ON: paste before </body> -->
+<style>
+#zyvWingoCard{display:block;width:100%;margin:12px 0;padding:15px;border:1px solid #34476a;border-radius:16px;background:linear-gradient(135deg,#172442,#25204a);color:#f7f9ff;text-align:left;font:inherit}
+#zyvWingoCard strong{font-size:18px}#zyvWingoCard small{display:block;color:#b9c7e5;margin-top:5px}
+#zyvWingo{display:none;background:#f5f6ff;color:#20283a;border-radius:16px;padding:10px;margin-top:10px;font-family:Arial,system-ui,sans-serif}
+#zyvWingo *{box-sizing:border-box}#zyvWingo .zw-top{display:flex;justify-content:space-between;align-items:center;padding:10px 3px;font-weight:900}
+#zyvWingo .zw-wallet{background:#19284a;color:#ffdf77;padding:9px 11px;border-radius:11px}
+#zyvWingo .zw-banner{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:linear-gradient(120deg,#ff666f,#ff8b85);color:white;padding:13px;border-radius:15px}
+#zyvWingo .zw-clock{font-size:29px;font-weight:900;text-align:right;letter-spacing:1px}
+#zyvWingo .zw-period{font-size:10px;text-align:right;overflow-wrap:anywhere;margin-top:5px}
+#zyvWingo .zw-panel{background:#fff;border-radius:14px;padding:12px;margin-top:10px;box-shadow:0 2px 9px #19284a10}
+#zyvWingo .zw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+#zyvWingo button{cursor:pointer}
+#zyvWingo .zw-pick{border:2px solid transparent;border-radius:10px;color:white;padding:12px 4px;font-weight:800;font-size:14px}
+#zyvWingo .zw-green{background:#19b875}#zyvWingo .zw-violet{background:#a65be9}#zyvWingo .zw-red{background:#f25361}
+#zyvWingo .zw-big{background:#ffad54}#zyvWingo .zw-small{background:#6ca5ed}
+#zyvWingo .zw-pick.on{outline:3px solid #25324a;outline-offset:1px}
+#zyvWingo .zw-numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:#f6f6ff;padding:9px;border-radius:12px;margin-top:10px}
+#zyvWingo .zw-num{aspect-ratio:1;border-radius:50%;border:3px solid #f2a3a8;background:radial-gradient(circle at 35% 25%,white 0 22%,#ffd9db 50%,#f45b65 76%,#d52c46);color:#e54d5c;font-size:23px;font-weight:900}
+#zyvWingo .zw-num.g{border-color:#9de7c8;background:radial-gradient(circle at 35% 25%,white 0 22%,#d7ffed 50%,#31c889 76%,#07854f);color:#19a96c}
+#zyvWingo .zw-num.v{border-color:#d8b5ff;background:radial-gradient(circle at 35% 25%,white 0 22%,#f0d9ff 50%,#b25aff 76%,#7732c8);color:#9951dc}
+#zyvWingo .zw-num.on{outline:3px solid #26344d}
+#zyvWingo .zw-stakes{display:flex;gap:6px;margin-top:10px}
+#zyvWingo .zw-stakes button{flex:1;min-width:0;border:0;border-radius:8px;background:#f0f2fa;color:#657089;padding:10px 2px;font-weight:800}
+#zyvWingo .zw-stakes button.on{background:#19b875;color:white}
+#zyvWingo .zw-confirm{width:100%;border:0;border-radius:11px;background:linear-gradient(90deg,#ff626b,#f34d5e);color:white;font-size:16px;font-weight:900;padding:14px;margin-top:11px}
+#zyvWingo .zw-back{border:0;border-radius:9px;background:#e9edf7;color:#384663;padding:9px 12px;font-weight:800;margin-bottom:9px}
+#zyvWingo .zw-hint{font-size:11px;color:#7b8499;line-height:1.4;margin-top:8px}
+#zyvWingo .zw-toast{display:none;position:fixed;z-index:99999;inset:0;background:#071127b8;align-items:center;justify-content:center;padding:20px}
+#zyvWingo .zw-toast.show{display:flex}
+#zyvWingo .zw-card{background:white;border-radius:22px;text-align:center;width:min(100%,330px);padding:22px 17px;border-top:7px solid #19b875;box-shadow:0 15px 55px #0005}
+#zyvWingo .zw-card.loss{border-color:#f25361}
+#zyvWingo .zw-icon{font-size:40px;color:#19a76b}
+#zyvWingo .zw-card.loss .zw-icon,#zyvWingo .zw-card.loss .zw-title,#zyvWingo .zw-card.loss .zw-pl{color:#e44759}
+#zyvWingo .zw-title{font-size:23px;font-weight:950;color:#159b63;margin:5px 0}
+#zyvWingo .zw-pl{font-size:27px;font-weight:950;color:#159b63;margin:10px 0}
+#zyvWingo .zw-next{background:#eef2fa;border-radius:10px;padding:10px;font-size:12px;color:#53617b;font-weight:800}
+#zyvWingo .zw-next strong{display:block;font-size:25px;color:#1b2a49}
+#zyvWingo .zw-ok{width:100%;border:0;background:#19b875;color:white;border-radius:10px;padding:12px;margin-top:12px;font-weight:900}
+#zyvWingo .zw-card.loss .zw-ok{background:#f25361}
+#zyvWingo .zw-history{display:grid;grid-template-columns:1.3fr .5fr .8fr .35fr;gap:5px;padding:10px 3px;border-bottom:1px solid #eef0f6;font-size:11px;align-items:center}
+</style>
+<script>
+(function(){
+ const $=id=>document.getElementById(id);
+ const home=document.querySelector('#home');
+ if(!home||$('zyvWingo'))return;
+ const games=home.querySelector('.games');
+ if(games){
+  const card=document.createElement('button');card.id='zyvWingoCard';
+  card.innerHTML='<strong>🎯 WinGo Color Game</strong><small>30-second rounds · Number · Color · Big / Small · Virtual coins</small>';
+  card.onclick=()=>{home.style.display='none';$('zyvWingo').style.display='block';window.scrollTo(0,0)};
+  games.appendChild(card);
+ }
+ const app=document.createElement('section');app.id='zyvWingo';
+ app.innerHTML=`
+ <button class="zw-back" id="zwBack">← All games</button>
+ <div class="zw-top"><span style="font-size:22px">ZYVRO<span style="color:#f45f68">•</span></span><span class="zw-wallet">🪙 <b id="zwBalance">1000</b></span></div>
+ <div style="font-size:11px;background:#fff1cd;color:#755719;border-radius:8px;padding:8px;margin-bottom:10px">DEMO ONLY · Virtual coins, no real-money deposits or withdrawals.</div>
+ <div class="zw-banner"><div><div style="border:1px solid #ffffffaa;border-radius:22px;text-align:center;padding:7px;margin-bottom:10px">▣ How to play</div><b>WinGo 30sec</b><div style="font-size:11px;margin-top:8px">Latest results</div><div id="zwRecent" style="display:flex;gap:4px;margin-top:5px"></div></div><div><div style="text-align:right;font-size:13px;font-weight:bold">Time remaining</div><div class="zw-clock" id="zwClock">00:30</div><div class="zw-period" id="zwPeriod">Round #1001</div></div></div>
+ <div class="zw-panel"><div class="zw-grid">
+ <button class="zw-pick zw-green" data-m="color" data-v="Green">Green</button><button class="zw-pick zw-violet" data-m="color" data-v="Violet">Violet</button><button class="zw-pick zw-red" data-m="color" data-v="Red">Red</button></div>
+ <div class="zw-numbers" id="zwNumbers"></div>
+ <div class="zw-stakes"><button class="on" data-stake="1">X1</button><button data-stake="5">X5</button><button data-stake="10">X10</button><button data-stake="20">X20</button><button data-stake="50">X50</button><button data-stake="100">X100</button></div>
+ <div class="zw-grid" style="margin-top:10px;grid-template-columns:1fr 1fr"><button class="zw-pick zw-big" data-m="size" data-v="Big">Big (5–9)</button><button class="zw-pick zw-small" data-m="size" data-v="Small">Small (0–4)</button></div>
+ <div class="zw-hint">Ek round mein number, color aur Big/Small mein se multiple choices select kar sakte ho. Har selected option par chosen virtual stake lagega.</div>
+ <button class="zw-confirm" id="zwPlace">Place bet</button><div id="zwStatus" class="zw-hint">Pehle option select karo.</div></div>
+ <div class="zw-panel"><b>Last round · Profit / Loss</b><div id="zwPL" style="margin-top:9px;color:#68758c">Abhi result nahi aaya.</div></div>
+ <div class="zw-panel"><b>Game history</b><div style="display:grid;grid-template-columns:1.3fr .5fr .8fr .35fr;background:#f45a65;color:white;padding:10px 4px;margin-top:10px;font-size:11px"><span>Period</span><span>Number</span><span>Big/Small</span><span>Color</span></div><div id="zwHistory"></div></div>
+ <div class="zw-toast" id="zwToast"><div class="zw-card" id="zwCard"><div class="zw-icon" id="zwIcon">✓</div><div class="zw-title" id="zwTitle">Bet successful!</div><div id="zwDesc" style="font-size:13px;color:#66728a;line-height:1.5">Virtual bet accepted.</div><div class="zw-pl" id="zwResultAmount">0 coins</div><div class="zw-next">NEXT ROUND STARTS IN<strong id="zwNext">5</strong></div><button class="zw-ok" id="zwOkay">Continue</button></div></div>`;
+ home.insertAdjacentElement('afterend',app);
+ const selected=[],bets=[],history=[];let balance=1000,stake=1,round=1001,remaining=30,locked=false,resultTimer=null,clockTimer=null;
+ for(let n=0;n<=9;n++){const b=document.createElement('button');b.className='zw-num '+([1,3,7,9].includes(n)?'g':([0,5].includes(n)?'v':''));b.textContent=n;b.dataset.m='number';b.dataset.v=String(n);$('zwNumbers').appendChild(b)}
+ function tone(win){try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);g.gain.value=.045;if(win){o.type='triangle';[523,659,784,1046].forEach((f,i)=>o.frequency.setValueAtTime(f,c.currentTime+i*.12));g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.65);o.start();o.stop(c.currentTime+.66)}else{o.type='sawtooth';[330,247,185].forEach((f,i)=>o.frequency.setValueAtTime(f,c.currentTime+i*.17));g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.55);o.start();o.stop(c.currentTime+.56)}o.onended=()=>c.close()}catch(e){}}
+ app.querySelectorAll('[data-m]').forEach(b=>b.addEventListener('click',()=>{if(locked)return;const m=b.dataset.m,v=b.dataset.v,i=selected.findIndex(x=>x.m===m);if(i>=0&&selected[i].v===v){selected.splice(i,1);b.classList.remove('on')}else{if(i>=0)selected.splice(i,1);selected.push({m,v});app.querySelectorAll('[data-m="'+m+'"]').forEach(x=>x.classList.remove('on'));b.classList.add('on')}$('zwStatus').textContent=selected.length?'Selected: '+selected.map(x=>x.v).join(' + '):'Pehle option select karo.'}));
+ app.querySelectorAll('[data-stake]').forEach(b=>b.addEventListener('click',()=>{if(locked)return;stake=+b.dataset.stake;app.querySelectorAll('[data-stake]').forEach(x=>x.classList.remove('on'));b.classList.add('on')}));
+ $('zwBack').onclick=()=>{app.style.display='none';home.style.display='block';window.scrollTo(0,0)};
+ $('zwPlace').onclick=()=>{if(locked)return;if(!selected.length){$('zwStatus').textContent='Number, color ya Big/Small select karo.';return}const cost=stake*selected.length;if(cost>balance){$('zwStatus').textContent='Coins kam hain. Chhota stake choose karo.';return}balance-=cost;$('zwBalance').textContent=balance;selected.forEach(x=>bets.push({...x,stake}));locked=true;$('zwPlace').disabled=true;$('zwStatus').textContent='✓ Bet successful — '+selected.length+' selection(s), '+cost+' coins locked.';$('zwPL').textContent='Bet accepted for round #'+round+'.';tone(true);};
+ function color(n){if(n===0||n===5)return 'Violet';return [1,3,7,9].includes(n)?'Green':'Red'}
+ function nextRound(){if(resultTimer)clearInterval(resultTimer);$('zwToast').classList.remove('show');round++;remaining=30;locked=false;selected.length=0;bets.length=0;$('zwPlace').disabled=false;$('zwPeriod').textContent='Round #'+round;$('zwClock').textContent='00:30';app.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));app.querySelector('[data-stake="1"]').classList.add('on');stake=1;$('zwStatus').textContent='Pehle option select karo.'}
+ function settle(){const n=Math.floor(Math.random()*10),c=color(n),size=n>=5?'Big':'Small';let total=0,returned=0;for(const b of bets){total+=b.stake;const hit=(b.m==='number'&&b.v===String(n))||(b.m==='color'&&b.v===c)||(b.m==='size'&&b.v===size);if(hit)returned+=b.stake*2}const net=returned-total;balance+=returned;$('zwBalance').textContent=balance;$('zwPL').style.color=net>=0?'#159b63':'#e44759';$('zwPL').textContent=(net>=0?'PROFIT +':'LOSS −')+Math.abs(net)+' virtual coins · Result '+n+' / '+c+' / '+size;history.unshift({round,n,c,size});history.splice(10);$('zwHistory').innerHTML=history.map(h=>'<div class="zw-history"><span>'+h.round+'</span><b style="text-align:center;color:'+(h.c==='Green'?'#18ae70':h.c==='Red'?'#ed5a65':'#a05ce5')+'">'+h.n+'</b><span>'+h.size+'</span><span style="color:'+(h.c==='Green'?'#18ae70':h.c==='Red'?'#ed5a65':'#a05ce5')+'">●</span></div>').join('');$('zwRecent').innerHTML=history.slice(0,5).map(h=>'<span style="width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:'+(h.c==='Green'?'#19b875':h.c==='Red'?'#f25361':'#a65be9')+';font-size:12px;font-weight:bold">'+h.n+'</span>').join('');$('zwCard').classList.toggle('loss',net<=0);$('zwIcon').textContent=net>0?'✓':'×';$('zwTitle').textContent=net>0?'🎉 Congratulations!':(bets.length?'😔 Better luck next time':'Round result');$('zwDesc').textContent='Result: '+n+' · '+c+' · '+size+(bets.length?' — '+(net>0?'Your prediction matched!':'Your bet did not match.'):' — No bet placed.');$('zwResultAmount').textContent=(net>=0?'+':'−')+Math.abs(net)+' virtual coins';$('zwToast').classList.add('show');tone(net>0);let t=5;$('zwNext').textContent=t;resultTimer=setInterval(()=>{t--;$('zwNext').textContent=Math.max(0,t);if(t<=0)nextRound()},1000)}
+ $('zwOkay').onclick=()=>{};clockTimer=setInterval(()=>{if(app.style.display==='none'||remaining<=0)return;remaining--;let s=String(remaining).padStart(2,'0');$('zwClock').textContent='00:'+s;if(remaining===0){locked=true;$('zwPlace').disabled=true;settle()}},1000);
+})();
+</script>
+<!-- END ZYVRO WINGO ADD-ON --></body>
 </html>
