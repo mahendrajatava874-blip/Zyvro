@@ -26,7 +26,48 @@ body{background:radial-gradient(ellipse at 50% -15%,#20375e 0%,#0b1222 45%,#070b
 .wallet{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .wallet-reset{display:block;margin:0 0 10px auto;border:1px solid #49617f;border-radius:9px;padding:7px 10px;background:#14223a;color:#c7fff9;font-weight:800}
 .num{cursor:pointer}
-</style></head><body>
+
+/* Supabase login gate */
+body:not(.auth-ready) .app{display:none}
+.authbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;margin:0 0 10px;border:1px solid #293b5a;border-radius:12px;background:#111a2d;color:#cbd6eb;font-size:12px;overflow-wrap:anywhere}
+.authbar .auth-actions{display:flex;gap:6px;flex-shrink:0}.authbar button{border:1px solid #3a5579;border-radius:8px;padding:7px 10px;background:#1b2b45;color:#c8fff9;font-weight:800}.authbar .profile-btn{background:linear-gradient(120deg,#29e0d0,#248ce5);color:#061c29;border-color:#29e0d0}.authbar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-error{margin:20px auto;max-width:520px;padding:16px;color:#ffd4dc;background:#451e2b;border-radius:12px;font:14px Arial,sans-serif}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function(){
+ const URL = "https://sgpefzdgwayjxpdjetaj.supabase.co";
+ const KEY = "sb_publishable_k-rm9Vf61Hv11z9yvOwalA_vtRGLDdm";
+ function fail(message){
+   document.body.classList.add("auth-ready");
+   const box=document.createElement("div");box.className="auth-error";box.textContent=message;
+   document.body.prepend(box);
+ }
+ try {
+   if(!window.supabase){fail("Supabase library load nahi hui. Internet check karke page refresh karein.");return;}
+   const client=window.supabase.createClient(URL,KEY);
+   const {data,error}=await client.auth.getSession();
+   if(error) throw error;
+   if(!data.session){window.location.replace("./auth.html");return;}
+   const revealGame=()=>{
+     document.body.classList.add("auth-ready");
+     const header=document.querySelector(".top");
+     if(header && !document.querySelector(".authbar")){
+       const bar=document.createElement("div");bar.className="authbar";
+       const email=document.createElement("span");email.textContent="Signed in: "+(data.session.user.email||"ZYVRO player");
+       const actions=document.createElement("div");actions.className="auth-actions";
+       const profile=document.createElement("button");profile.type="button";profile.className="profile-btn";profile.textContent="👤 Profile";
+       profile.addEventListener("click",()=>{window.location.href="./profile_premium_v2.html";});
+       const out=document.createElement("button");out.type="button";out.textContent="Log out";
+       out.addEventListener("click",async()=>{out.disabled=true;out.textContent="Logging out…";const {error}=await client.auth.signOut();if(error){out.disabled=false;out.textContent="Log out";alert("Logout failed: "+error.message);return;}window.location.replace("./auth.html");});
+       actions.append(profile,out);bar.append(email,actions);header.insertAdjacentElement("afterend",bar);
+     }
+   };
+   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",revealGame,{once:true}); else revealGame();
+ } catch(e){fail("Login check failed: "+(e&&e.message?e.message:"Unknown error")+". Refresh karein ya auth.html par dobara login karein.");}
+})();
+</script>
+</head><body>
 <main class="app">
 <header class="top"><div class="logo">ZYVR<i>O•</i></div><div class="wallet">🪙 <span id="balance">1000</span> coins</div></header>
 <div class="demo">VIRTUAL MODE · Practice coins only. No real-money betting or cash prizes.</div><button class="wallet-reset" onclick="resetDemoCoins()">↻ Reset virtual coins to 1000</button>
