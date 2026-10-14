@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zyvro — Login / Sign Up</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(145deg,#07111f,#101b32 55%,#073b37);font-family:Arial,sans-serif;color:#f4f7fb}
+    .card{width:100%;max-width:420px;padding:28px 23px;border:1px solid #ffffff22;border-radius:22px;background:#101a2bee;box-shadow:0 18px 55px #0006}
+    .logo{font-size:32px;font-weight:800;letter-spacing:1px;text-align:center;color:#53e0a0}
+    .sub{text-align:center;color:#b7c4d8;margin:8px 0 24px}
+    .tabs{display:flex;gap:8px;margin-bottom:20px}
+    .tab{flex:1;padding:12px;border:1px solid #34445b;border-radius:10px;background:#17253b;color:#dce7f6;font-weight:700}
+    .tab.active{background:#36c98b;color:#062417;border-color:#36c98b}
+    label{display:block;margin:14px 0 7px;color:#d8e2ef;font-size:14px}
+    input{width:100%;padding:13px;border-radius:10px;border:1px solid #3a4a60;background:#091322;color:white;font-size:16px;outline:none}
+    input:focus{border-color:#53e0a0}
+    .submit{width:100%;margin-top:20px;padding:14px;border:0;border-radius:10px;background:#35ce8e;color:#062417;font-size:16px;font-weight:800}
+    .submit:disabled{opacity:.65}
+    #message{display:none;margin-top:16px;padding:12px;border-radius:10px;line-height:1.45;font-size:14px;overflow-wrap:anywhere}
+    #message.ok{display:block;background:#123c30;color:#aaf4d1}
+    #message.err{display:block;background:#49232b;color:#ffd0d5}
+    .note{text-align:center;color:#98a9c1;font-size:12px;line-height:1.5;margin-top:20px}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="logo">ZYVRO</div>
+    <div class="sub">Sign in or create your account</div>
+    <div class="tabs">
+      <button class="tab active" id="loginTab" type="button">Login</button>
+      <button class="tab" id="signupTab" type="button">Sign Up</button>
+    </div>
+    <form id="authForm">
+      <label for="email">Email address</label>
+      <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+      <label for="password">Password (minimum 6 characters)</label>
+      <input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="Enter password" required>
+      <button class="submit" id="submitBtn" type="submit">Login</button>
+    </form>
+    <div id="message" role="status"></div>
+    <div class="note">Virtual-game account only. Never enter your email password here—use a new password for Zyvro.</div>
+  </main>
+<script>
+  // STEP 1: Replace these two placeholder strings with your own Supabase Project URL and Publishable/anon public key.
+  const SUPABASE_URL = https://sgpefzdgwayjxpdjetaj.supabase.co/rest/v1/
+  const SUPABASE_KEY = sb_publishable_k-rm9Vf61Hv11z9yvOwalA_vtRGLDdm
+
+  const msg = document.getElementById("message");
+  const form = document.getElementById("authForm");
+  const submitBtn = document.getElementById("submitBtn");
+  const loginTab = document.getElementById("loginTab");
+  const signupTab = document.getElementById("signupTab");
+  let mode = "login";
+
+  function showMessage(text, type) {
+    msg.textContent = text;
+    msg.className = type;
+  }
+  function setMode(nextMode) {
+    mode = nextMode;
+    loginTab.classList.toggle("active", mode === "login");
+    signupTab.classList.toggle("active", mode === "signup");
+    submitBtn.textContent = mode === "login" ? "Login" : "Create Account";
+    document.getElementById("password").autocomplete = mode === "login" ? "current-password" : "new-password";
+    msg.className = "";
+    msg.textContent = "";
+  }
+  loginTab.addEventListener("click", () => setMode("login"));
+  signupTab.addEventListener("click", () => setMode("signup"));
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (SUPABASE_URL.includes("PASTE_") || SUPABASE_KEY.includes("PASTE_")) {
+      showMessage("Setup needed: replace both Supabase placeholders in this file, then commit the changes on GitHub.", "err");
+      return;
+    }
+    if (!window.supabase || !window.supabase.createClient) {
+      showMessage("Supabase library load nahi hui. Internet connection check karke page refresh karein.", "err");
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = mode === "login" ? "Logging in..." : "Creating account...";
+    try {
+      const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      if (mode === "signup") {
+        const { data, error } = await client.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: "https://mahendrajatava874-blip.github.io/Zyvro/" }
+        });
+        if (error) throw error;
+        if (data.session) {
+          showMessage("Account created! Opening Zyvro game...", "ok");
+          setTimeout(() => location.href = "https://mahendrajatava874-blip.github.io/Zyvro/", 1200);
+        } else {
+          showMessage("Signup request successful. Apne email inbox mein Supabase confirmation link check karein. Email confirm karne ke baad game open karein.", "ok");
+        }
+      } else {
+        const { error } = await client.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        showMessage("Login successful! Opening Zyvro game...", "ok");
+        setTimeout(() => location.href = "https://mahendrajatava874-blip.github.io/Zyvro/", 900);
+      }
+    } catch (error) {
+      showMessage(error.message || "Something went wrong. Please try again.", "err");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = mode === "login" ? "Login" : "Create Account";
+    }
+  });
+</script>
+</body>
+</html>
