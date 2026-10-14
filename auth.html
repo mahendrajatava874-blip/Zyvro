@@ -21,7 +21,7 @@
  try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){showMessage("Supabase URL/Publishable Key check karein.","err");return}
  form.addEventListener("submit",async event=>{event.preventDefault();const email=emailInput.value.trim(),password=passwordInput.value;if(!email||password.length<6){showMessage("Valid email aur minimum 6-character password daalein.","err");return}
  submitBtn.disabled=true;submitBtn.textContent=mode==="login"?"Logging in...":"Creating account...";
- try{if(mode==="signup"){const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;if(data.session){showMessage("Account ban gaya! Game khol rahe hain...","ok");window.location.href="./index.html"}else showMessage("Signup request successful. Email Inbox/Spam mein confirmation link check karein, confirm karke Login karein.","ok")}
+ try{if(mode==="signup"){const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;if(data.session){showMessage("Account ban gaya! Game khol rahe hain...","ok");window.location.href="./index_profile_logout.html";}else showMessage("Signup request successful. Email Inbox/Spam mein confirmation link check karein, confirm karke Login karein.","ok")}
  else{const {data,error}=await client.auth.signInWithPassword({email,password});if(error)throw error;if(data.session)window.location.href="./index.html"}}
  catch(error){showMessage("Error: "+(error?.message||"Unknown error"),"err")}finally{submitBtn.disabled=false;submitBtn.textContent=mode==="login"?"Login":"Create Account"}});
 })();
