@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Zyvro • Prism Arcade</title>
+<style>
+:root{--red:#f45662;--green:#18b56d;--violet:#b55bec;--blue:#70a7ed;--ink:#252b3b;--muted:#7e879b;--pale:#f6f6ff}
+*{box-sizing:border-box}body{margin:0;background:#f5f6ff;color:var(--ink);font-family:Arial,system-ui,sans-serif}.app{max-width:520px;margin:auto;padding:10px 10px 28px}.top{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:12px;border-radius:0 0 14px 14px;margin:-10px -10px 10px;box-shadow:0 2px 9px #14203a10}.logo{font-size:23px;font-weight:950;letter-spacing:1px;color:#1a2646}.logo i{font-style:normal;color:#42cce9}.wallet{background:#17264a;color:#ffdf78;padding:10px 12px;border-radius:12px;font-weight:900}.demo{font-size:11px;background:#fff3d3;color:#765a1d;border-radius:8px;padding:8px 10px;margin-bottom:10px}.banner{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:linear-gradient(120deg,#ff646d,#ff9188);border-radius:16px;padding:14px;color:white;box-shadow:0 3px 8px #f45b6630}.how{border:1px solid #ffffffad;border-radius:24px;text-align:center;padding:8px;font-size:14px;margin-bottom:12px}.game-name{font-size:14px;font-weight:800}.balls{display:flex;gap:5px;margin-top:12px}.mini{height:29px;width:29px;border-radius:50%;display:grid;place-items:center;background:#ed5a66;border:2px solid #ffffffa8;color:white;font-weight:900}.mini.Green{background:var(--green)}.mini.Violet{background:var(--violet)}.timerlabel{text-align:right;font-weight:800;font-size:14px}.clock{display:flex;justify-content:flex-end;gap:3px;margin:9px 0}.digit{background:#fff;color:#252b3b;min-width:25px;text-align:center;padding:5px 6px;font-size:29px;font-weight:900}.period{text-align:right;font-size:11px;font-weight:800;overflow-wrap:anywhere}.panel{background:#fff;border-radius:16px;padding:14px;margin-top:12px;box-shadow:0 2px 9px #1b294510}.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn{border:2px solid transparent;border-radius:10px;color:white;padding:13px 4px;font-size:16px;cursor:pointer}.green{background:var(--green)}.violet{background:var(--violet)}.red{background:var(--red)}button.sel{outline:3px solid #27334c;outline-offset:1px;filter:brightness(.94)}.label{font-size:14px;font-weight:900;margin-bottom:10px}.numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:var(--pale);padding:10px;border-radius:14px;margin-top:12px}.num{aspect-ratio:1;border-radius:50%;border:3px solid #f4a6ac;background:radial-gradient(circle at 35% 25%,#fff 0 23%,#ffd9dc 47%,#f65b65 70%,#c72e46 100%);color:#e64f60;font-size:25px;font-weight:950;box-shadow:inset 0 0 0 3px #ffffffa8}.num.g{border-color:#9de7c8;background:radial-gradient(circle at 35% 25%,#fff 0 23%,#d9ffec 47%,#35c98b 70%,#078550 100%);color:#20aa70}.num.v{border-color:#d8b5ff;background:radial-gradient(circle at 35% 25%,#fff 0 23%,#f1ddff 47%,#b35bfa 70%,#7932c8 100%);color:#9851dc}.stake-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.stake{flex:1;min-width:43px;border:1px solid #eceefa;border-radius:9px;background:#f5f6fc;color:#778197;padding:10px 3px;font-weight:900}.stake.sel{background:var(--green);color:white;outline:none}.random{background:#fff;color:#e85c68;border-color:#ee7882}.sizes{display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border-radius:28px;margin-top:12px}.sizes button{border:0;padding:14px 4px;color:#fff;font-size:20px}.big{background:#ffad55}.small{background:var(--blue)}.hint{font-size:11px;color:#7d879b;line-height:1.45;margin-top:9px}.place{width:100%;margin-top:12px;background:linear-gradient(90deg,#ff626b,#f24d5d);border:0;border-radius:11px;color:white;padding:14px;font-size:16px;font-weight:950}.place:disabled{opacity:.5}.status{min-height:18px;margin-top:9px;font-size:12px;color:#66728a}.pl{font-size:15px;font-weight:900}.tablehead,.historyrow{display:grid;grid-template-columns:1.4fr .55fr .8fr .45fr;gap:4px;align-items:center}.tablehead{background:var(--red);color:white;padding:12px 8px;border-radius:8px;font-size:11px;font-weight:900}.historyrow{padding:12px 5px;border-bottom:1px solid #edf0f7;font-size:11px}.hnum{text-align:center;font-size:20px;font-weight:950}.tag{background:#f0f2fa;border-radius:6px;text-align:center;padding:5px}.foot{text-align:center;color:#9ba3b5;font-size:10px;margin-top:15px}
+.sheetback{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:flex-end;justify-content:center}.sheetback.show{display:flex}.sheet{background:#fff;width:min(100%,520px);border-radius:18px 18px 0 0;padding:16px 14px 24px;box-shadow:0 -8px 30px #0002}.sheethead{display:flex;justify-content:space-between;align-items:center;font-weight:950;margin-bottom:12px}.x{border:0;background:#eef1f8;border-radius:50%;width:30px;height:30px;font-size:20px}.sheettitle{background:#edf4ff;border-radius:8px;padding:10px;text-align:center;font-weight:900;margin-bottom:12px}.sheetrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0;font-size:13px}.chips{display:flex;gap:5px}.chips button{border:1px solid #dce2ef;background:#f6f8fc;color:#58657b;border-radius:7px;padding:8px;font-weight:900}.chips button.on{background:#e4efff;border-color:#70a7ed;color:#2769bd}.stepper{display:flex;align-items:center;gap:10px}.stepper button{border:0;border-radius:7px;padding:7px 12px;background:#e8f0ff;color:#2868bd;font-weight:950}.agree{display:flex;gap:7px;align-items:flex-start;font-size:11px;color:#647089;line-height:1.4;margin:13px 0}.sheetfoot{display:grid;grid-template-columns:1fr 1.6fr;gap:8px}.sheetfoot button{padding:12px;border:0;border-radius:9px;font-weight:950}.cancel{background:#eef1f7;color:#536078}.confirm{background:#68a6f3;color:#fff}.toastback{display:none;position:fixed;inset:0;z-index:30;background:#0008;align-items:center;justify-content:center;padding:20px}.toastback.show{display:flex}.toast{width:min(100%,340px);background:white;border-radius:20px;padding:22px 18px;text-align:center;border-top:6px solid var(--green);box-shadow:0 18px 60px #0005;animation:pop .2s ease-out}.toast.loss{border-top-color:var(--red)}.toasticon{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;margin:auto auto 10px;background:#dff9ec;color:#15965c;font-size:40px;font-weight:950}.toast.loss .toasticon{background:#ffe3e7;color:#dc4053}.toast h2{margin:4px 0;color:#159b63;font-size:25px}.toast.loss h2{color:#e44759}.toast p{font-size:13px;color:#58657b;line-height:1.5}.amountbig{font-size:28px;font-weight:950;color:#159b63}.toast.loss .amountbig{color:#e44759}.next{background:#edf1fa;border-radius:11px;padding:10px;margin-top:12px;font-size:12px;font-weight:850;color:#53617b}.next strong{display:block;font-size:26px;color:#1c2c49;margin-top:3px}.toast button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;background:var(--green);color:white;font-weight:950}.toast.loss button{background:var(--red)}@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+/* ZYVRO PRISM ARCADE — new obsidian / aqua / amber / fuchsia theme */
+:root{--red:#ffb84d;--green:#29e0d0;--violet:#ed55c7;--blue:#29e0d0;--ink:#f4f7ff;--muted:#99a8c7;--pale:#121c32;--bg:#080d19;--panel:#111a2d;--line:#273552}
+body{background:radial-gradient(ellipse at 50% -15%,#20375e 0%,#0b1222 45%,#070b14 100%);color:var(--ink);min-height:100vh}.app{max-width:540px;padding:12px 12px 32px}.top{background:linear-gradient(145deg,#151f35,#0e1628);border:1px solid #304363;border-radius:18px;margin:0 0 12px;box-shadow:0 10px 30px #0005,inset 0 1px #ffffff12}.logo{color:#f4f7ff;text-shadow:0 0 18px #29e0d066}.logo i{color:#29e0d0}.wallet{background:linear-gradient(135deg,#ffe3a0,#ffb84d);color:#1b2030;box-shadow:0 5px 18px #ffb84d30}.demo{background:#111d30;color:#91a9cc;border:1px solid #293d5e}.banner{background:linear-gradient(125deg,#153f50,#20254d 55%,#421d4c);border:1px solid #47728b;box-shadow:0 12px 28px #0004,inset 0 1px #ffffff20}.how{border-color:#79dcd8;color:#d9fffc}.mini{background:#ffb84d;color:#1c2030;border:2px solid #ffffff35}.mini.Aqua{background:#29e0d0}.mini.Gold{background:#ffb84d}.mini.Fuchsia{background:#ed55c7}.digit{background:linear-gradient(145deg,#17253d,#0b1221);border:1px solid #35496a;border-radius:8px;color:#f4f7ff;box-shadow:inset 0 2px 7px #0007,0 4px 12px #0003}.panel{background:linear-gradient(155deg,#141f34,#0f1728);border:1px solid #293b5a;border-radius:18px;box-shadow:0 12px 28px #0003,inset 0 1px #ffffff0a}.colors .btn{font-weight:900;box-shadow:inset 0 1px #ffffff55,0 5px 0 #0004,0 8px 16px #0003;transition:transform .15s,filter .15s}.colors .btn:active,.num:active,.sizes button:active{transform:translateY(3px);box-shadow:inset 0 2px 8px #0004}.green{background:linear-gradient(145deg,#58fff0,#0caea7);color:#062b32}.violet{background:linear-gradient(145deg,#ff9ce7,#d52b9f);color:#3b092e}.red{background:linear-gradient(145deg,#ffd88a,#ee9a22);color:#3c2500}button.sel{outline:2px solid #fff;outline-offset:2px;filter:brightness(1.08)}.numbers{background:linear-gradient(145deg,#0a1222,#16233b);border:1px solid #293b5a}.num{border-color:#ffcc70;background:radial-gradient(circle at 32% 22%,#fff 0 8%,#ffe6a6 20%,#ffb84d 55%,#b76a13 100%);color:#402600;box-shadow:inset 0 0 0 3px #ffffff55,0 7px 12px #0005;transition:transform .15s,box-shadow .15s}.num.g{border-color:#8cfff7;background:radial-gradient(circle at 32% 22%,#fff 0 8%,#b8fff8 20%,#29e0d0 55%,#087b83 100%);color:#03464b}.num.v{border-color:#ffc0f0;background:radial-gradient(circle at 32% 22%,#fff 0 8%,#ffd9f4 20%,#ed55c7 55%,#8e1b72 100%);color:#5b0c47}.stake{background:#17243b;border-color:#2d4264;color:#c1cde3}.stake.sel{background:linear-gradient(135deg,#29e0d0,#118b9c);color:#061e2b;box-shadow:0 4px 14px #29e0d033}.random{background:#1e2941;color:#ffcc70;border-color:#6b5737}.sizes button{font-weight:950;box-shadow:inset 0 1px #ffffff55,0 5px 0 #0004}.big{background:linear-gradient(135deg,#ffdb83,#d99428);color:#342100}.small{background:linear-gradient(135deg,#72fff1,#138da1);color:#052a35}.hint,.status{color:#9eacc5}.place{background:linear-gradient(110deg,#29e0d0,#248ce5,#ed55c7);box-shadow:0 8px 18px #248ce544,inset 0 1px #ffffff70;letter-spacing:.3px}.place:active{transform:translateY(2px)}.pl{color:#f4f7ff}.tablehead{background:linear-gradient(100deg,#1baea9,#6b49ad,#b82c8c);color:white}.historyrow{border-bottom:1px solid #253450;color:#cbd6eb}.tag{background:#202d46;color:#e6edff}.foot{color:#7185a8}.sheet{background:linear-gradient(155deg,#17243b,#0b1221);color:#f4f7ff;border:1px solid #344868}.sheettitle{background:#1b2b45;color:#8ef8f0}.x,.cancel{background:#24334d;color:#e6edff}.chips button{background:#1b2941;color:#b9c8e1;border-color:#354967}.chips button.on{background:#153f50;border-color:#29e0d0;color:#8ffff6}.stepper button{background:#153f50;color:#8ffff6}.agree{color:#a8b7d0}.confirm{background:linear-gradient(100deg,#29e0d0,#248ce5);color:#061c29}.toast{background:linear-gradient(155deg,#17243b,#0c1322);color:#f4f7ff;border:1px solid #334966;border-top:6px solid #29e0d0}.toast h2{color:#29e0d0}.toast.loss h2{color:#ffb84d}.toast p{color:#b4c2d9}.toasticon{background:#153f50;color:#6dfff4}.toast.loss .toasticon{background:#4a3420;color:#ffbf5c}.amountbig{color:#29e0d0}.toast.loss .amountbig{color:#ffb84d}.next{background:#1b2941;color:#b6c6df}.next strong{color:#f4f7ff}.toast button{background:linear-gradient(100deg,#29e0d0,#248ce5);color:#061c29}.toast.loss button{background:linear-gradient(100deg,#ffcf70,#ee9a22);color:#382300}
+.historytools{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:0 0 12px}.refreshbtn{border:1px solid #3a5579;border-radius:9px;padding:8px 11px;background:linear-gradient(145deg,#1b2b45,#101a2c);color:#c8fff9;font-weight:800}.subheading{font-size:12px;color:#91a9cc;margin:-3px 0 10px}.ledgerrow{display:grid;grid-template-columns:1.1fr .8fr .7fr .7fr;gap:5px;align-items:center;padding:11px 3px;border-bottom:1px solid #253450;font-size:11px;color:#cbd6eb}.ledgerhead{display:grid;grid-template-columns:1.1fr .8fr .7fr .7fr;gap:5px;background:#1b2941;color:#a9bddc;padding:9px 6px;border-radius:8px;font-size:10px;font-weight:900}.profit{color:#29e0d0;font-weight:900}.loss{color:#ffb84d;font-weight:900}.emptyledger{text-align:center;color:#8094b5;font-size:12px;padding:18px 5px}.pill{display:inline-block;padding:4px 7px;border-radius:7px;background:#24334d;color:#dce8ff}
+@keyframes floatGlow{0%,100%{filter:drop-shadow(0 0 3px #29e0d022)}50%{filter:drop-shadow(0 0 12px #29e0d055)}}.logo{animation:floatGlow 4s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* Mobile layout corrections: keep the clock inside the game card. */
+.banner{grid-template-columns:minmax(0,1fr);gap:14px}
+.banner>div:last-child{min-width:0;width:100%}
+.timerlabel{text-align:left;font-size:13px}
+.clock{justify-content:flex-start;gap:4px;max-width:100%;margin:7px 0}
+.digit{flex:1;min-width:0;padding:5px 0;font-size:clamp(22px,7vw,30px)}
+.period{text-align:left;font-size:11px;overflow-wrap:anywhere;word-break:break-word}
+.wallet{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.wallet-reset{display:block;margin:0 0 10px auto;border:1px solid #49617f;border-radius:9px;padding:7px 10px;background:#14223a;color:#c7fff9;font-weight:800}
+.num{cursor:pointer}
+
+/* Supabase login gate */
+body:not(.auth-ready) .app{display:none}
+.authbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;margin:0 0 10px;border:1px solid #293b5a;border-radius:12px;background:#111a2d;color:#cbd6eb;font-size:12px;overflow-wrap:anywhere}
+.authbar .auth-actions{display:flex;gap:6px;flex-shrink:0}.authbar button{border:1px solid #3a5579;border-radius:8px;padding:7px 10px;background:#1b2b45;color:#c8fff9;font-weight:800}.authbar .profile-btn{background:linear-gradient(120deg,#29e0d0,#248ce5);color:#061c29;border-color:#29e0d0}.authbar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-error{margin:20px auto;max-width:520px;padding:16px;color:#ffd4dc;background:#451e2b;border-radius:12px;font:14px Arial,sans-serif}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function(){
+ const URL = "https://sgpefzdgwayjxpdjetaj.supabase.co";
+ const KEY = "sb_publishable_k-rm9Vf61Hv11z9yvOwalA_vtRGLDdm";
+ function fail(message){
+   document.body.classList.add("auth-ready");
+   const box=document.createElement("div");box.className="auth-error";box.textContent=message;
+   document.body.prepend(box);
+ }
+ try {
+   if(!window.supabase){fail("Supabase library load nahi hui. Internet check karke page refresh karein.");return;}
+   const client=window.supabase.createClient(URL,KEY); window.zyvroClient=client;
+   const {data,error}=await client.auth.getSession();
+   if(error) throw error;
+   if(!data.session){window.location.replace("./auth.html");return;}
+   const revealGame=()=>{
+     document.body.classList.add("auth-ready");
+     const header=document.querySelector(".top");
+     if(header && !document.querySelector(".authbar")){
+       const bar=document.createElement("div");bar.className="authbar";
+       const email=document.createElement("span");email.textContent="Signed in: "+(data.session.user.email||"ZYVRO player");
+       const actions=document.createElement("div");actions.className="auth-actions";
+       const profile=document.createElement("button");profile.type="button";profile.className="profile-btn";profile.textContent="👤 Profile";
+       profile.addEventListener("click",()=>{window.location.href="./profile_premium_v2.html";});
+       const out=document.createElement("button");out.type="button";out.textContent="Log out";
+       out.addEventListener("click",async()=>{out.disabled=true;out.textContent="Logging out…";const {error}=await client.auth.signOut();if(error){out.disabled=false;out.textContent="Log out";alert("Logout failed: "+error.message);return;}window.location.replace("./auth.html");});
+       actions.append(profile,out);bar.append(email,actions);header.insertAdjacentElement("afterend",bar);
+     }
+   };
+   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",revealGame,{once:true}); else revealGame();
+ } catch(e){fail("Login check failed: "+(e&&e.message?e.message:"Unknown error")+". Refresh karein ya auth.html par dobara login karein.");}
+})();
+</script>
+</head><body>
+<main class="app">
+<header class="top"><div class="logo">ZYVR<i>O•</i></div><div class="wallet">🪙 <span id="balance">1000</span> coins</div></header>
+<div class="demo">VIRTUAL MODE · Practice coins only. No real-money betting or cash prizes.</div><button class="wallet-reset" onclick="resetDemoCoins()">↻ Reset virtual coins to 1000</button>
+<section class="banner"><div><div class="how">▣ How to play</div><div class="game-name">PRISM • 30 SEC</div><div class="balls" id="balls"><span class="mini">8</span><span class="mini">3</span><span class="mini Green">1</span><span class="mini">6</span><span class="mini Violet">0</span></div></div><div><div class="timerlabel">Time remaining</div><div class="clock"><span class="digit" id="m1">0</span><span class="digit" id="m2">0</span><span class="digit">:</span><span class="digit" id="s1">3</span><span class="digit" id="s2">0</span></div><div class="period" id="period">2026101300001001</div></div></section>
+<section class="panel"><div class="colors"><button class="btn green" data-market="color" data-val="Aqua" onclick="pick(this)">AQUA</button><button class="btn violet" data-market="color" data-val="Fuchsia" onclick="pick(this)">FUCHSIA</button><button class="btn red" data-market="color" data-val="Gold" onclick="pick(this)">GOLD</button></div>
+<div class="numbers" id="numbers"></div>
+<div class="stake-row"><button class="stake random" onclick="randomPick()">Random</button><button class="stake sel" data-stake="1" onclick="setStake(this)">X1</button><button class="stake" data-stake="5" onclick="setStake(this)">X5</button><button class="stake" data-stake="10" onclick="setStake(this)">X10</button><button class="stake" data-stake="20" onclick="setStake(this)">X20</button><button class="stake" data-stake="50" onclick="setStake(this)">X50</button><button class="stake" data-stake="100" onclick="setStake(this)">X100</button></div>
+<div class="sizes"><button class="big" data-market="size" data-val="Big" onclick="pick(this)">Big</button><button class="small" data-market="size" data-val="Small" onclick="pick(this)">Small</button></div>
+<div class="hint">Choose one or more predictions in this round. X1–X100 is the virtual stake for each selected option.</div>
+<button class="place" id="place" onclick="openSheet()">Place bet</button><div class="status" id="status">Select number, color or Big/Small, then place a demo bet.</div></section>
+<section class="panel"><div class="label">Last round · Profit / Loss</div><div class="pl" id="pl" style="color:#758096">No round settled yet.</div></section>
+<section class="panel"><div class="historytools"><div class="label" style="margin:0">Round results</div><button class="refreshbtn" onclick="refreshHistory()">⟳ Update history</button></div><div class="subheading">Recent outcomes · latest first</div><div class="tablehead"><span>Period</span><span>Number</span><span>Big / Small</span><span>Color</span></div><div id="history"></div></section>
+<section class="panel"><div class="label">My bet history</div><div class="subheading">Every bet, stake, result and net profit/loss saved on this browser.</div><div class="ledgerhead"><span>Round / Pick</span><span>Stake</span><span>Result</span><span>Net P/L</span></div><div id="betledger"><div class="emptyledger">Your bet records will appear here after the first round.</div></div></section>
+<div class="foot">ZYVRO PRISM ARCADE · Shared 30-second round · Virtual coins only.</div></main>
+<div class="sheetback" id="sheetback" onclick="if(event.target===this)closeSheet()"><div class="sheet"><div class="sheethead"><span>WinGo 30sec · Confirm bet</span><button class="x" onclick="closeSheet()">×</button></div><div class="sheettitle" id="sheettitle">Your selections</div><div class="sheetrow"><b>Available balance</b><b><span id="sheetbalance">1000</span> coins</b></div><div class="sheetrow"><b>Stake per selection</b><div class="chips"><button class="on" data-sheetstake="1" onclick="sheetStake(this)">1</button><button data-sheetstake="5" onclick="sheetStake(this)">5</button><button data-sheetstake="10" onclick="sheetStake(this)">10</button><button data-sheetstake="20" onclick="sheetStake(this)">20</button><button data-sheetstake="50" onclick="sheetStake(this)">50</button><button data-sheetstake="100" onclick="sheetStake(this)">100</button></div></div><div class="sheetrow"><b>Quantity</b><div class="stepper"><button onclick="qtyChange(-1)">−</button><strong id="qty">1</strong><button onclick="qtyChange(1)">+</button></div></div><div class="sheetrow"><b>Total stake</b><b id="total">1 coin</b></div><div class="sheetfoot"><button class="cancel" onclick="closeSheet()">Cancel</button><button class="confirm" id="confirm" onclick="confirmBet()">Confirm bet</button></div></div></div>
+<div class="toastback" id="toastback"><div class="toast" id="toast"><div class="toasticon" id="toasticon">✓</div><h2 id="toasttitle">Bet successful!</h2><p id="toasttext">Your demo bet is locked.</p><div class="amountbig" id="toastamount">1 coin</div><div class="next" id="nextwrap">NEXT ROUND STARTS IN<strong id="next">5</strong></div><button onclick="dismissToast()">OK</button></div></div>
+<script>
+'use strict';
+const SAVE_KEY='zyvro_wingo_demo_v1';
+const LEDGER_KEY='zyvro_prism_bet_ledger_v1';
+let betLedger=[];
+let balance=1000,stake=1,remaining=30,round=1001,selected=[],bets=[],history=[],locked=false,quantity=1,nextInterval=null,roundSettled=false;
+let sharedPeriod=null, sharedResult=null, sharedEndsAt=0, sharedReady=false, sharedPolling=false;
+const $=id=>document.getElementById(id);
+function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({balance,round,remaining,selected,bets,history,locked,stake,quantity,roundSettled}));localStorage.setItem(LEDGER_KEY,JSON.stringify(betLedger));}catch(e){$('status').textContent='Browser storage unavailable; progress may not be saved.';}}
+function loadGame(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;const s=JSON.parse(raw);if(!s||typeof s!=='object')return;balance=Number.isFinite(s.balance)?s.balance:1000;round=Number.isFinite(s.round)?s.round:1001;remaining=Number.isFinite(s.remaining)&&s.remaining>=0?s.remaining:30;selected=Array.isArray(s.selected)?s.selected:[];bets=Array.isArray(s.bets)?s.bets:[];history=Array.isArray(s.history)?s.history.slice(0,10):[];try{const ledger=localStorage.getItem(LEDGER_KEY);betLedger=ledger?JSON.parse(ledger):[];if(!Array.isArray(betLedger))betLedger=[];}catch(e){betLedger=[];}locked=!!s.locked;stake=Number.isFinite(s.stake)?s.stake:1;quantity=Number.isFinite(s.quantity)?s.quantity:1;roundSettled=!!s.roundSettled;}catch(e){/* Start a clean demo if saved data is unreadable. */}}
+function restoreDisplay(){ $('balance').textContent=balance;$('period').textContent=new Date().toISOString().slice(0,10).replaceAll('-','')+String(round).padStart(6,'0');$('sheetbalance').textContent=balance;const s=String(Math.max(0,remaining)).padStart(2,'0');$('s1').textContent=s[0];$('s2').textContent=s[1];$('place').disabled=locked;document.querySelectorAll('[data-market]').forEach(b=>b.classList.toggle('sel',selected.some(x=>x.market===b.dataset.market&&x.val===b.dataset.val)));document.querySelectorAll('[data-stake]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.stake)===stake));updateHistory();updateBetLedger();if(locked){$('status').textContent='Saved bet restored for round '+round+'.';} }
+
+for(let n=0;n<=9;n++){const b=document.createElement('button');b.className='num '+([1,3,7,9].includes(n)?'g':([0,5].includes(n)?'v':''));b.textContent=n;b.dataset.market='number';b.dataset.val=String(n);b.onclick=()=>pick(b);$('numbers').appendChild(b)}
+function beep(kind='tap'){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);g.gain.value=.035;if(kind==='win'){o.type='triangle';o.frequency.setValueAtTime(523,c.currentTime);o.frequency.setValueAtTime(659,c.currentTime+.12);o.frequency.setValueAtTime(784,c.currentTime+.24);o.frequency.setValueAtTime(1046,c.currentTime+.38);g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.65);o.start();o.stop(c.currentTime+.66)}else if(kind==='loss'){o.type='sawtooth';o.frequency.setValueAtTime(330,c.currentTime);o.frequency.setValueAtTime(247,c.currentTime+.18);o.frequency.setValueAtTime(185,c.currentTime+.36);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.55);o.start();o.stop(c.currentTime+.56)}else{o.frequency.value=kind==='success'?780:500;o.start();g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.12);o.stop(c.currentTime+.13)}o.onended=()=>c.close()}catch(e){}}
+function pick(b){if(locked){$('status').textContent='This round is locked. Wait for the next round.';return}const market=b.dataset.market,val=b.dataset.val;const i=selected.findIndex(x=>x.market===market);if(i>=0&&selected[i].val===val){selected.splice(i,1);b.classList.remove('sel')}else{if(i>=0)selected.splice(i,1);document.querySelectorAll('[data-market="'+market+'"]').forEach(x=>x.classList.remove('sel'));selected.push({market,val});b.classList.add('sel')}$('status').textContent=selected.length?'Selected: '+selected.map(x=>x.val).join(' + '):'No option selected.';beep()}
+function setStake(b){if(locked)return;stake=Number(b.dataset.stake);document.querySelectorAll('[data-stake]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');beep()}
+function randomPick(){if(locked)return;const n=Math.floor(Math.random()*10);pick(document.querySelector('[data-market="number"][data-val="'+n+'"]'))}
+function openSheet(){if(locked){$('status').textContent='Your bet for this round is already locked.';return}if(!selected.length){$('status').textContent='First choose number, color or Big/Small.';beep('loss');return}quantity=1;$('qty').textContent='1';$('sheetbalance').textContent=balance;$('sheettitle').textContent='Selected: '+selected.map(x=>x.val).join(' + ');document.querySelectorAll('[data-sheetstake]').forEach(x=>x.classList.toggle('on',Number(x.dataset.sheetstake)===stake));updateTotal();$('sheetback').classList.add('show');beep()}
+function closeSheet(){$('sheetback').classList.remove('show')}
+function sheetStake(b){stake=Number(b.dataset.sheetstake);document.querySelectorAll('[data-sheetstake]').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('[data-stake]').forEach(x=>{x.classList.toggle('sel',Number(x.dataset.stake)===stake)});updateTotal()}
+function qtyChange(delta){quantity=Math.max(1,Math.min(100,quantity+delta));$('qty').textContent=quantity;updateTotal()}
+function updateTotal(){const total=stake*quantity*selected.length;$('total').textContent=total+' virtual coin'+(total===1?'':'s');$('confirm').textContent='Confirm · '+total}
+async function confirmBet(){
+ const total=stake*quantity*selected.length;
+ if(!sharedReady || !sharedPeriod){$('status').textContent='Shared round is syncing. Please wait a moment.';return;}
+ if(remaining<=0 || locked){$('status').textContent='Round closed. Wait for the next round.';return;}
+ if(total>balance){$('status').textContent='Not enough virtual coins.';return;}
+ const btn=$('confirm');btn.disabled=true;btn.textContent='Saving bet…';
+ try{
+   const selections=selected.map(x=>({market:x.market,val:x.val}));
+   const {data,error}=await window.zyvroClient.rpc('zyvro_place_shared_bet',{
+     p_period:sharedPeriod,p_selections:selections,p_stake_each:stake,p_quantity:quantity
+   });
+   if(error) throw error;
+   await syncSharedRound();
+   bets=selected.flatMap(x=>Array.from({length:quantity},()=>({...x,stake})));
+   locked=true;$('place').disabled=true;
+   $('status').textContent='✓ Bet saved for shared round '+sharedPeriod+'.';
+   saveGame();$('sheetback').classList.remove('show');$('toast').classList.remove('loss');
+   $('toasticon').textContent='✓';$('toasttitle').textContent='Bet successful!';
+   $('toasttext').textContent=selected.map(x=>x.val).join(' + ')+' · Saved for shared round '+sharedPeriod+'.';
+   $('toastamount').textContent='−'+total+' virtual coins';$('nextwrap').style.display='none';
+   $('toastback').classList.add('show');beep('success');
+   setTimeout(()=>{if(!roundSettled)$('toastback').classList.remove('show')},1800);
+ }catch(e){
+   $('status').textContent='Bet not saved: '+(e?.message||'Please refresh and try again.');
+ }finally{btn.disabled=false;updateTotal();}
+}
+function dismissToast(){$('toastback').classList.remove('show')}
+function getColor(n){if(n===0||n===5)return'Fuchsia';return[1,3,7,9].includes(n)?'Aqua':'Gold'}
+function colorHex(c){return c==='Aqua'?'#29e0d0':c==='Gold'?'#ffb84d':'#ed55c7'}
+function updateHistory(){ $('history').innerHTML=history.map(h=>'<div class="historyrow"><span>'+h.period+'</span><span class="hnum" style="color:'+colorHex(h.color)+'">'+h.n+'</span><span class="tag">'+h.size+'</span><span style="color:'+colorHex(h.color)+'">● '+h.color+'</span></div>').join('')||'<div class="emptyledger">No completed rounds yet.</div>';$('balls').innerHTML=history.slice(0,5).map(h=>'<span class="mini '+h.color+'">'+h.n+'</span>').join('')||'<span class="mini">8</span><span class="mini Aqua">3</span><span class="mini Gold">1</span><span class="mini">6</span><span class="mini Fuchsia">0</span>'}
+function updateBetLedger(){const host=$('betledger');if(!betLedger.length){host.innerHTML='<div class="emptyledger">No bets yet. Your settled bets will be listed here.</div>';return;}host.innerHTML=betLedger.slice(0,100).map(h=>'<div class="ledgerrow"><span><b>'+h.period+'</b><br><span class="pill">'+h.pick+'</span><br><span style="color:#8195b7">Result '+h.number+' · '+h.color+' · '+h.size+'</span></span><span>'+h.stake+' coin'+(h.stake===1?'':'s')+'</span><span class="'+(h.outcome==='WIN'?'profit':h.outcome==='LOSS'?'loss':'')+'">'+h.outcome+'</span><span class="'+(h.net>0?'profit':h.net<0?'loss':'')+'">'+(h.net>0?'+':'')+h.net+'</span></div>').join('');}
+function resetDemoCoins(){ $('status').textContent='Virtual coins are server-managed; refill is available only when balance reaches zero.'; beep(); }
+function refreshHistory(){updateHistory();updateBetLedger();$('status').textContent='History refreshed. Saved records kept.';beep();}
+function refreshGame(){saveGame();location.reload();}
+
+loadGame();if(roundSettled){round++;remaining=30;selected=[];bets=[];locked=false;roundSettled=false;quantity=1;stake=1;saveGame();}else if(remaining===0){remaining=1;}restoreDisplay();
+function settleRound(){if(roundSettled)return;roundSettled=true;const n=Number.isInteger(sharedResult)?sharedResult:0,color=getColor(n),size=n>=5?'Big':'Small';let total=0,returned=0;const settledBets=bets.slice();for(const b of settledBets){total+=b.stake;const match=(b.market==='number'&&b.val===String(n))||(b.market==='color'&&b.val===color)||(b.market==='size'&&b.val===size);if(match)returned+=b.stake*2;const gross=match?b.stake*2:0;betLedger.unshift({period:$('period').textContent,pick:b.market==='number'?'Number '+b.val:b.market==='color'?'Color '+b.val:b.val,stake:b.stake,number:n,color,size,outcome:match?'WIN':'LOSS',net:gross-b.stake});}balance+=returned;$('balance').textContent=balance;const net=returned-total;$('pl').style.color=net>0?'#29e0d0':net<0?'#ffb84d':'#cbd6eb';$('pl').textContent=bets.length?(net>0?'PROFIT +'+net:net<0?'LOSS −'+Math.abs(net):'BREAK EVEN · 0')+' coins · Result '+n+' / '+color+' / '+size:'No bet this round · Result '+n+' / '+color+' / '+size;history.unshift({period:$('period').textContent,n,color,size});history=history.slice(0,10);betLedger=betLedger.slice(0,500);saveGame();updateHistory();updateBetLedger();showRoundResult(bets.length>0,net,n,color,size,total); }
+function showRoundResult(hadBet,net,n,color,size,total){const won=net>0;const isLoss=hadBet&&net<0;$('toast').classList.toggle('loss',isLoss);$('toasticon').textContent=!hadBet?'⏱':won?'✓':isLoss?'×':'=';$('toasttitle').textContent=!hadBet?'Round complete':won?'🎉 Congratulations!':isLoss?'😔 Better luck next time':'Break even';$('toasttext').textContent=!hadBet?'No bet was placed this round.':won?'Your bet passed! Result: '+n+' · '+color+' · '+size:isLoss?'Your prediction did not match. Result: '+n+' · '+color+' · '+size:'Your net result is zero.';$('toastamount').textContent=!hadBet?'No coins won or lost':(net>0?'+':'')+net+' virtual coins';$('nextwrap').style.display='block';$('next').textContent='5';$('toastback').classList.add('show');beep(won?'win':isLoss?'loss':'tap');let t=5;if(nextInterval)clearInterval(nextInterval);nextInterval=setInterval(()=>{t--;if(t<0)t=0;$('next').textContent=t;if(t===0){clearInterval(nextInterval);nextInterval=null;startNextRound()}},1000)}
+async function syncSharedRound(){
+ if(sharedPolling)return;sharedPolling=true;
+ try{
+   const {data,error}=await window.zyvroClient.rpc('zyvro_get_shared_round');
+   if(error)throw error;
+   const r=Array.isArray(data)?data[0]:data;
+   if(!r)throw new Error('No shared round returned');
+   const walletResp=await window.zyvroClient.rpc('zyvro_get_wallet_balance');
+   if(walletResp.error)throw walletResp.error;
+   const walletData=walletResp.data;
+   balance=Number(Array.isArray(walletData)?(walletData[0]?.balance ?? walletData[0]):(walletData?.balance ?? walletData));
+   if(!Number.isFinite(balance))throw new Error('Wallet balance unavailable');
+   $('balance').textContent=balance;$('sheetbalance').textContent=balance;
+   const newPeriod=String(r.period);
+   if(sharedPeriod!==newPeriod){
+     const hadPrevious=sharedPeriod!==null;
+     if(hadPrevious && !roundSettled && bets.length){roundSettled=true;}
+     sharedPeriod=newPeriod;sharedResult=Number(r.result_number);
+     sharedEndsAt=new Date(r.ends_at).getTime();
+     roundSettled=false;round=Number(newPeriod.slice(-6))||round+1;
+     remaining=Number(r.seconds_left)||0;selected=[];bets=[];locked=false;quantity=1;stake=1;
+     $('period').textContent=newPeriod;$('place').disabled=remaining<=0;
+     document.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));
+     const defaultStake=document.querySelector('[data-stake="1"]');if(defaultStake)defaultStake.classList.add('sel');
+     $('status').textContent='Connected to shared server round. Bets and virtual coins are saved by Supabase.';
+     $('confirm').disabled=false;saveGame();
+   }else{
+     sharedResult=Number(r.result_number);sharedEndsAt=new Date(r.ends_at).getTime();
+     remaining=Math.max(0,Math.ceil((sharedEndsAt-Date.now())/1000));
+   }
+   const myBets=await window.zyvroClient.from('zyvro_shared_bets').select('period,selections,stake_each,quantity,total_stake,payout,net,settled_at,created_at').order('created_at',{ascending:false}).limit(50);
+   if(!myBets.error){locked=myBets.data.some(b=>String(b.period)===String(sharedPeriod));$('place').disabled=locked||remaining<=0;betLedger=myBets.data.map(b=>({period:b.period,pick:(b.selections||[]).map(x=>x.market==='number'?'Number '+x.val:x.market==='color'?'Color '+x.val:x.val).join(', '),stake:b.total_stake,number:'—',color:'—',size:'—',outcome:b.settled_at?(Number(b.payout||0)>0?'WIN':'LOSS'):'PENDING',net:b.net==null?0:Number(b.net)}));updateBetLedger();}
+   sharedReady=true;
+   const sec=String(remaining).padStart(2,'0');
+   $('m1').textContent='0';$('m2').textContent='0';$('s1').textContent=sec[0];$('s2').textContent=sec[1];
+   $('place').disabled=locked||remaining<=0;
+   if(remaining<=0 && !roundSettled){
+     locked=true;$('place').disabled=true;
+     $('status').textContent='Round closed. Syncing the next shared round…';
+     // Poll again; database clock decides the next period for every player.
+   }
+ }catch(e){
+   sharedReady=false;$('status').textContent='Shared round connection error: '+(e?.message||'refresh page');
+ }finally{sharedPolling=false;}
+}
+loadGame();restoreDisplay();
+setInterval(syncSharedRound,1000);
+syncSharedRound();
+</script></body></html>
