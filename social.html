@@ -1,61 +1,289 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zyvro Social</title><meta name="theme-color" content="#0b1220"><style>
-*{box-sizing:border-box}body{margin:0;background:#0b1220;color:#edf4ff;font:14px Arial,sans-serif}.wrap{max-width:700px;margin:auto;padding:14px}.head{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#121e32;border:1px solid #2b3e5e;border-radius:14px}.logo{font-size:23px;font-weight:900;color:#43e3d2}.btn{border:0;border-radius:9px;padding:10px 12px;background:#28cdbf;color:#06212b;font-weight:800;cursor:pointer}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}.tab{background:#1a2941;color:#d7e4fa;border:1px solid #314967;border-radius:9px;padding:10px 3px;font-weight:800}.tab.active{background:#28cdbf;color:#06212b}.panel{background:#121e32;border:1px solid #293d5c;border-radius:14px;padding:12px;margin:10px 0}.hide{display:none}.row{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid #253653}.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#243650;display:grid;place-items:center;font-size:22px;flex-shrink:0}.grow{flex:1;min-width:0}.muted{color:#8fa5c4;font-size:12px}.small{font-size:12px;color:#9db1ce}.inputrow{display:flex;gap:7px;margin-top:10px}.inputrow input{min-width:0;flex:1;background:#0c1628;border:1px solid #334b6c;color:white;border-radius:9px;padding:11px}.pill{font-size:11px;color:#89f4dc;background:#173e45;border-radius:20px;padding:5px 8px}.messages{height:270px;overflow:auto;background:#0c1628;border-radius:10px;padding:8px}.msg{padding:8px 10px;margin:5px 0;background:#1a2b45;border-radius:10px;overflow-wrap:anywhere}.msg.mine{background:#174b50;margin-left:20px}.notice{padding:12px;color:#ffd98c;background:#3d321b;border-radius:9px;margin-top:10px}.profileline{display:flex;align-items:center;gap:9px}.rank{font-weight:900;color:#ffd77a;min-width:25px}.foot{color:#7e94b3;font-size:11px;text-align:center;margin:16px 0}
-</style></head><body><main class="wrap"><header class="head"><div><div class="logo">ZYVRO • SOCIAL</div><div class="muted" id="who">Connecting…</div></div><button class="btn" onclick="location.href='./index.html'">🎮 Game</button></header><div class="tabs"><button class="tab active" data-tab="rank">🏆 Rank</button><button class="tab" data-tab="friends">🤝 Friends</button><button class="tab" data-tab="private">💬 Chat</button><button class="tab" data-tab="room">🌐 Room</button></div>
-<section id="rank" class="panel"><h3>🏆 Player Ranking</h3><div class="muted">Rank is based on XP. Profile photos and names are shown.</div><div id="ranklist">Loading…</div><button class="btn" onclick="loadRanks()">Refresh ranking</button></section>
-<section id="friends" class="panel hide"><h3>🤝 Find players</h3><div class="inputrow"><input id="search" placeholder="Search username"><button class="btn" onclick="searchPlayers()">Search</button></div><div id="searchresults"></div><h3>Friend requests</h3><div id="requests">Loading…</div><h3>My friends</h3><div id="friendlist">Loading…</div></section>
-<section id="private" class="panel hide"><h3>💬 Personal chat</h3><div class="muted">Choose an accepted friend below.</div><div id="chatfriends"></div><div id="chatwith" class="pill">No friend selected</div><div class="messages" id="privatemessages"></div><div class="inputrow"><input id="privatetext" maxlength="500" placeholder="Write a message…"><button class="btn" onclick="sendPrivate()">Send</button></div></section>
-<section id="room" class="panel hide"><h3>🌐 Live Room Chat</h3><div class="muted">All signed-in players can chat here. Please be respectful.</div><div class="messages" id="roommessages"></div><div class="inputrow"><input id="roomtext" maxlength="300" placeholder="Message everyone…"><button class="btn" onclick="sendRoom()">Send</button></div></section><div id="notice" class="notice hide"></div><div class="foot">Virtual game community • Never share passwords or private information.</div></main>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>Zyvro Social</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1220;color:#edf4ff;font:15px Arial,sans-serif}
+.wrap{max-width:700px;margin:auto;padding:14px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;background:#121e32;border:1px solid #2b3e5e;border-radius:16px}
+.logo{font-size:clamp(21px,5vw,30px);font-weight:900;color:#43e3d2}
+.btn{border:0;border-radius:10px;padding:11px 13px;background:#28cdbf;color:#06212b;font-weight:800;cursor:pointer}
+.btn:disabled{opacity:.55}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:14px 0}
+.tab{background:#1a2941;color:#d7e4fa;border:1px solid #314967;border-radius:10px;padding:12px 3px;font-weight:800;cursor:pointer}
+.tab.active{background:#28cdbf;color:#06212b}
+.panel{background:#121e32;border:1px solid #293d5c;border-radius:16px;padding:14px;margin:12px 0}
+.hide{display:none!important}
+.row{display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid #253653}
+.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#243650;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.grow{flex:1;min-width:0;overflow-wrap:anywhere}
+.muted{color:#8fa5c4;font-size:13px;line-height:1.4}
+.inputrow{display:flex;gap:7px;margin-top:10px}
+.inputrow input{min-width:0;flex:1;background:#0c1628;border:1px solid #334b6c;color:white;border-radius:9px;padding:12px;font-size:16px}
+.pill{font-size:12px;color:#89f4dc;background:#173e45;border-radius:20px;padding:6px 9px;display:inline-block}
+.messages{height:270px;overflow:auto;background:#0c1628;border-radius:10px;padding:8px;margin-top:10px}
+.msg{padding:9px 10px;margin:6px 0;background:#1a2b45;border-radius:10px;overflow-wrap:anywhere}
+.msg.mine{background:#174b50;margin-left:20px}
+.notice{padding:12px;color:#ffd98c;background:#3d321b;border-radius:9px;margin-top:10px;overflow-wrap:anywhere}
+.profileline{display:flex;align-items:center;gap:9px}
+.rank{font-weight:900;color:#ffd77a;min-width:25px}
+.foot{color:#7e94b3;font-size:11px;text-align:center;margin:16px 0}
+@media(max-width:390px){.wrap{padding:9px}.head{padding:10px}.tabs{gap:4px}.tab{font-size:12px;padding:11px 1px}.btn{padding:10px}.panel{padding:11px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="head">
+  <div><div class="logo">ZYVRO • SOCIAL</div><div class="muted" id="who">Connecting…</div></div>
+  <button class="btn" id="gameBtn" type="button">🎮 Game</button>
+</header>
+<div class="tabs">
+  <button class="tab active" data-tab="rank" type="button">🏆 Rank</button>
+  <button class="tab" data-tab="friends" type="button">🤝 Friends</button>
+  <button class="tab" data-tab="private" type="button">💬 Chat</button>
+  <button class="tab" data-tab="room" type="button">🌐 Room</button>
+</div>
+<section id="rank" class="panel"><h3>🏆 Player Ranking</h3><div class="muted">Ranking is based on XP. Profile names and photos are shown.</div><div id="ranklist">Connecting to database…</div><button class="btn" id="refreshRank" type="button">Refresh ranking</button></section>
+<section id="friends" class="panel hide"><h3>🤝 Find players</h3><div class="inputrow"><input id="search" placeholder="Search username" autocomplete="off"><button class="btn" id="searchBtn" type="button">Search</button></div><div id="searchresults"></div><h3>Friend requests</h3><div id="requests">Loading…</div><h3>My friends</h3><div id="friendlist">Loading…</div></section>
+<section id="private" class="panel hide"><h3>💬 Personal chat</h3><div class="muted">Choose an accepted friend below.</div><div id="chatfriends"></div><div id="chatwith" class="pill">No friend selected</div><div class="messages" id="privatemessages">Choose a friend to start.</div><div class="inputrow"><input id="privatetext" maxlength="500" placeholder="Write a message…" autocomplete="off"><button class="btn" id="sendPrivateBtn" type="button">Send</button></div></section>
+<section id="room" class="panel hide"><h3>🌐 Live Room Chat</h3><div class="muted">All signed-in players can chat here. Please be respectful.</div><div class="messages" id="roommessages">Loading room…</div><div class="inputrow"><input id="roomtext" maxlength="300" placeholder="Message everyone…" autocomplete="off"><button class="btn" id="sendRoomBtn" type="button">Send</button></div></section>
+<div id="notice" class="notice hide" role="status"></div>
+<div class="foot">Virtual game community • Never share passwords or private information.</div>
+</main>
 <script>
-// Tabs work immediately, even while the Supabase library is loading.
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
- document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));
- document.querySelectorAll('section.panel').forEach(s=>s.classList.toggle('hide',s.id!==b.dataset.tab));
- const who=document.getElementById('who');
- if(!window.zyvroSocialReady && who) who.textContent='Opening social features…';
-}));
-function loadSupabaseLibrary(){
- if(window.supabase && typeof window.supabase.createClient==='function') return Promise.resolve();
- const urls=['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2','https://unpkg.com/@supabase/supabase-js@2'];
- return new Promise((resolve,reject)=>{
-   let i=0, lastError;
-   const attempt=()=>{
-     if(window.supabase && typeof window.supabase.createClient==='function'){resolve();return;}
-     if(i>=urls.length){reject(lastError||new Error('Could not load Supabase library. Check internet connection and allow cdn.jsdelivr.net / unpkg.com.'));return;}
-     const script=document.createElement('script'); script.src=urls[i++]; script.async=true;
-     const timer=setTimeout(()=>{script.remove();lastError=new Error('Supabase library loading timed out');attempt();},10000);
-     script.onload=()=>{clearTimeout(timer); if(window.supabase&&typeof window.supabase.createClient==='function') resolve(); else {lastError=new Error('Supabase library loaded but API was not found');attempt();}};
-     script.onerror=()=>{clearTimeout(timer);lastError=new Error('Could not load '+script.src);attempt();};
-     document.head.appendChild(script);
-   }; attempt();
- });
+(() => {
+'use strict';
+const SUPABASE_URL = 'https://sgpefzdgwayjxpdjetaj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_k-rm9Vf61Hv11z9yvOwalA_vtRGLDdm';
+const $ = id => document.getElementById(id);
+let db = null, me = null, profiles = {}, selected = null, friends = [], refreshTimer = null;
+function note(message) {
+  $('notice').textContent = String(message || 'Something went wrong.');
+  $('notice').classList.remove('hide');
+  clearTimeout(note.timer);
+  note.timer = setTimeout(() => $('notice').classList.add('hide'), 6000);
 }
-loadSupabaseLibrary().then(()=>bootSocial()).catch(err=>{
- const who=document.getElementById('who'); if(who) who.textContent='Connection setup failed';
- const rank=document.getElementById('ranklist'); if(rank) rank.textContent='Could not load the Supabase library. Check your internet connection and refresh.';
- console.error(err);
-});
-function bootSocial(){
-window.zyvroSocialReady=true;
-const SUPABASE_URL='https://sgpefzdgwayjxpdjetaj.supabase.co', KEY='sb_publishable_k-rm9Vf61Hv11z9yvOwalA_vtRGLDdm'; const db=window.supabase.createClient(SUPABASE_URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});let me=null,profiles={},selected=null,friends=[];
-const $=id=>document.getElementById(id);function note(t){$('notice').textContent=t;$('notice').classList.remove('hide');setTimeout(()=>$('notice').classList.add('hide'),4000)}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function avatar(p){return p?.avatar_url?`<img class="avatar" src="${esc(p.avatar_url)}" alt="">`:`<div class="avatar">${esc(p?.avatar_emoji||'🎮')}</div>`}function playerRow(p,extra=''){return `<div class="row">${avatar(p)}<div class="grow"><b>${esc(p.username)}</b><div class="muted">Level ${p.level||1} · ${p.xp||0} XP</div></div>${extra}</div>`}
-async function initSocial(){const {data,error}=await db.auth.getSession();if(error||!data.session){location.href='./auth.html';return}me=data.session.user;$('who').textContent=data.session.user.email||'Signed in';document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('section.panel').forEach(s=>s.classList.toggle('hide',s.id!==b.dataset.tab));if(b.dataset.tab==='friends')loadFriends();if(b.dataset.tab==='private')loadChatFriends();if(b.dataset.tab==='room')loadRoom()});await loadRanks();await loadFriends();await loadRoom();setInterval(()=>{if(!$('room').classList.contains('hide'))loadRoom();if(selected&&!$('private').classList.contains('hide'))loadPrivate()},4000)}
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function avatar(p) {
+  if (p && p.avatar_url) return `<img class="avatar" src="${esc(p.avatar_url)}" alt="Profile photo" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar',textContent:'🎮'}))">`;
+  return `<div class="avatar">${esc(p?.avatar_emoji || '🎮')}</div>`;
+}
+function playerRow(p, extra='') {
+  if (!p) return '';
+  return `<div class="row">${avatar(p)}<div class="grow"><b>${esc(p.username || 'Player')}</b><div class="muted">Level ${Number(p.level)||1} · ${Number(p.xp)||0} XP</div></div>${extra}</div>`;
+}
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('section.panel').forEach(s => s.classList.toggle('hide', s.id !== name));
+  if (!db || !me) return;
+  if (name === 'rank') loadRanks();
+  if (name === 'friends') loadFriends();
+  if (name === 'private') loadChatFriends();
+  if (name === 'room') loadRoom();
+}
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+$('gameBtn').addEventListener('click', () => { location.href = './index.html'; });
+$('refreshRank').addEventListener('click', () => loadRanks());
+$('searchBtn').addEventListener('click', () => searchPlayers());
+$('search').addEventListener('keydown', e => { if (e.key === 'Enter') searchPlayers(); });
+$('sendPrivateBtn').addEventListener('click', () => sendPrivate());
+$('privatetext').addEventListener('keydown', e => { if (e.key === 'Enter') sendPrivate(); });
+$('sendRoomBtn').addEventListener('click', () => sendRoom());
+$('roomtext').addEventListener('keydown', e => { if (e.key === 'Enter') sendRoom(); });
 
-// Make inline HTML button handlers accessible after boot.
-window.loadRanks=()=>loadRanks(); window.searchPlayers=()=>searchPlayers();
-window.requestFriend=id=>requestFriend(id); window.acceptRequest=id=>acceptRequest(id);
-window.openChat=id=>openChat(id); window.sendPrivate=()=>sendPrivate(); window.sendRoom=()=>sendRoom();
-initSocial().catch(error=>{const who=$('who');if(who)who.textContent='Social setup error';const rank=$('ranklist');if(rank)rank.textContent='Error: '+(error&&error.message?error.message:String(error));note(error&&error.message?error.message:'Could not start social features');console.error(error)});
-async function getProfiles(ids){ids=[...new Set(ids.filter(Boolean))];if(!ids.length)return {};const {data}=await db.from('profiles').select('id,username,avatar_emoji,avatar_url,level,xp,wins,losses').in('id',ids);let o={};(data||[]).forEach(p=>o[p.id]=p);Object.assign(profiles,o);return o}
-async function loadRanks(){let {data,error}=await db.from('profiles').select('id,username,avatar_emoji,avatar_url,level,xp,wins,losses').order('xp',{ascending:false}).limit(50);if(error){$('ranklist').textContent=error.message;return}profiles={};(data||[]).forEach(p=>profiles[p.id]=p);$('ranklist').innerHTML=(data||[]).map((p,i)=>`<div class="row"><span class="rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span>${avatar(p)}<div class="grow"><b>${esc(p.username)}</b><div class="muted">Level ${p.level||1} · ${p.wins||0} wins</div></div><span class="pill">${p.xp||0} XP</span></div>`).join('')||'No players yet.'}
-async function searchPlayers(){let q=$('search').value.trim();if(q.length<2){note('Type at least 2 letters.');return}const {data,error}=await db.from('profiles').select('id,username,avatar_emoji,avatar_url,level,xp,wins,losses').ilike('username','%'+q+'%').neq('id',me.id).limit(15);if(error){note(error.message);return}profiles={};(data||[]).forEach(p=>profiles[p.id]=p);$('searchresults').innerHTML=(data||[]).map(p=>playerRow(p,`<button class="btn" onclick="requestFriend('${p.id}')">Add</button>`)).join('')||'No players found.'}
-async function requestFriend(id){const {error}=await db.from('zyvro_friend_requests').insert({sender_id:me.id,receiver_id:id});note(error?(error.code==='23505'?'Request already sent.':error.message):'Friend request sent!');loadFriends()}
-async function loadFriends(){let {data,error}=await db.from('zyvro_friend_requests').select('*').or(`sender_id.eq.${me.id},receiver_id.eq.${me.id}`).order('created_at',{ascending:false}).limit(100);if(error){$('requests').textContent=error.message;return}let incoming=(data||[]).filter(r=>r.receiver_id===me.id&&r.status==='pending'),accepted=(data||[]).filter(r=>r.status==='accepted');await getProfiles((data||[]).map(r=>r.sender_id===me.id?r.receiver_id:r.sender_id));$('requests').innerHTML=incoming.map(r=>playerRow(profiles[r.sender_id],`<button class="btn" onclick="acceptRequest('${r.id}')">Accept</button>`)).join('')||'<div class="muted">No pending requests.</div>';friends=accepted.map(r=>({id:r.sender_id===me.id?r.receiver_id:r.sender_id,requestId:r.id}));$('friendlist').innerHTML=friends.map(f=>playerRow(profiles[f.id],`<button class="btn" onclick="openChat('${f.id}')">Chat</button>`)).join('')||'<div class="muted">No friends yet. Search players above.</div>'}
-async function acceptRequest(id){const {error}=await db.from('zyvro_friend_requests').update({status:'accepted',updated_at:new Date().toISOString()}).eq('id',id);note(error?error.message:'Friend added!');await loadFriends()}
-async function loadChatFriends(){await loadFriends();$('chatfriends').innerHTML=friends.map(f=>`<button class="tab" style="margin:3px" onclick="openChat('${f.id}')">${esc(profiles[f.id]?.username||'Player')}</button>`).join('')||'<div class="muted">Add and accept friends first.</div>'}
-async function openChat(id){selected=id;let p=profiles[id];if(!p){await getProfiles([id]);p=profiles[id]}$('chatwith').textContent='Chat with '+(p?.username||'Player');await loadPrivate()}
-async function loadPrivate(){if(!selected)return;let {data,error}=await db.from('zyvro_messages').select('*').or(`and(sender_id.eq.${me.id},receiver_id.eq.${selected}),and(sender_id.eq.${selected},receiver_id.eq.${me.id})`).order('created_at',{ascending:true}).limit(100);if(error){$('privatemessages').textContent=error.message;return}await getProfiles((data||[]).map(m=>m.sender_id));$('privatemessages').innerHTML=(data||[]).map(m=>`<div class="msg ${m.sender_id===me.id?'mine':''}"><b>${esc(profiles[m.sender_id]?.username||'Player')}</b><br>${esc(m.body)}<div class="muted">${new Date(m.created_at).toLocaleString()}</div></div>`).join('');$('privatemessages').scrollTop=$('privatemessages').scrollHeight}
-async function sendPrivate(){let body=$('privatetext').value.trim();if(!selected){note('Select a friend first.');return}if(!body)return;const {error}=await db.from('zyvro_messages').insert({sender_id:me.id,receiver_id:selected,body});if(error){note(error.message);return}$('privatetext').value='';await loadPrivate()}
-async function loadRoom(){let {data,error}=await db.from('zyvro_room_messages').select('*').eq('room','main').order('created_at',{ascending:false}).limit(60);if(error){$('roommessages').textContent=error.message;return}data=(data||[]).reverse();await getProfiles(data.map(m=>m.sender_id));$('roommessages').innerHTML=data.map(m=>`<div class="msg ${m.sender_id===me?.id?'mine':''}"><b>${esc(profiles[m.sender_id]?.username||'Player')}</b>: ${esc(m.body)}<div class="muted">${new Date(m.created_at).toLocaleTimeString()}</div></div>`).join('');$('roommessages').scrollTop=$('roommessages').scrollHeight}
-async function sendRoom(){let body=$('roomtext').value.trim();if(!body)return;const {error}=await db.from('zyvro_room_messages').insert({sender_id:me.id,room:'main',body});if(error){note(error.message);return}$('roomtext').value='';await loadRoom()}
+function loadLibrary() {
+  if (window.supabase && typeof window.supabase.createClient === 'function') return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    s.async = true;
+    const timer = setTimeout(() => { s.remove(); reject(new Error('Supabase library load timed out. Check internet and refresh.')); }, 15000);
+    s.onload = () => {
+      clearTimeout(timer);
+      if (window.supabase && typeof window.supabase.createClient === 'function') resolve();
+      else reject(new Error('Supabase library loaded, but createClient is unavailable.'));
+    };
+    s.onerror = () => { clearTimeout(timer); reject(new Error('Could not load Supabase library. Check internet connection and refresh.')); };
+    document.head.appendChild(s);
+  });
 }
-</script></body></html>
+function fail(message) {
+  $('who').textContent = 'Connection error';
+  $('ranklist').textContent = message;
+  note(message);
+}
+async function boot() {
+  await loadLibrary();
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}
+  });
+  const {data, error} = await db.auth.getSession();
+  if (error) throw error;
+  if (!data || !data.session || !data.session.user) {
+    location.href = './auth.html';
+    return;
+  }
+  me = data.session.user;
+  $('who').textContent = me.email ? 'Signed in: ' + me.email : 'Signed in';
+  await loadRanks();
+  await loadFriends();
+  await loadRoom();
+  clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => {
+    if (!me) return;
+    if (!$('room').classList.contains('hide')) loadRoom();
+    if (selected && !$('private').classList.contains('hide')) loadPrivate();
+    if (!$('friends').classList.contains('hide')) loadFriends();
+  }, 6000);
+}
+async function getProfiles(ids) {
+  ids = [...new Set((ids || []).filter(Boolean))];
+  if (!ids.length) return {};
+  const {data, error} = await db.from('profiles')
+    .select('id,username,avatar_emoji,avatar_url,level,xp,wins,losses')
+    .in('id', ids);
+  if (error) throw error;
+  const found = {};
+  (data || []).forEach(p => found[p.id] = p);
+  Object.assign(profiles, found);
+  return found;
+}
+async function loadRanks() {
+  $('ranklist').textContent = 'Loading ranking…';
+  const {data, error} = await db.from('profiles')
+    .select('id,username,avatar_emoji,avatar_url,level,xp,wins,losses')
+    .order('xp', {ascending:false}).limit(50);
+  if (error) { $('ranklist').textContent = 'Ranking error: ' + error.message; return; }
+  profiles = {};
+  (data || []).forEach(p => profiles[p.id] = p);
+  $('ranklist').innerHTML = (data || []).map((p, i) =>
+    `<div class="row"><span class="rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span>${avatar(p)}<div class="grow"><b>${esc(p.username || 'Player')}</b><div class="muted">Level ${Number(p.level)||1} · ${Number(p.wins)||0} wins</div></div><span class="pill">${Number(p.xp)||0} XP</span></div>`
+  ).join('') || '<div class="muted">No players yet.</div>';
+}
+async function searchPlayers() {
+  const q = $('search').value.trim();
+  if (q.length < 2) { note('Username ke kam se kam 2 letters likho.'); return; }
+  $('searchresults').textContent = 'Searching…';
+  const {data, error} = await db.from('profiles')
+    .select('id,username,avatar_emoji,avatar_url,level,xp,wins,losses')
+    .ilike('username', '%' + q + '%').neq('id', me.id).limit(15);
+  if (error) { $('searchresults').textContent = 'Search error: ' + error.message; return; }
+  (data || []).forEach(p => profiles[p.id] = p);
+  $('searchresults').innerHTML = (data || []).map(p => playerRow(p,
+    `<button class="btn" type="button" data-request="${esc(p.id)}">Add</button>`)).join('') || '<div class="muted">No players found.</div>';
+  $('searchresults').querySelectorAll('[data-request]').forEach(b => b.addEventListener('click', () => requestFriend(b.dataset.request)));
+}
+async function requestFriend(id) {
+  if (!id || id === me.id) return;
+  const {error} = await db.from('zyvro_friend_requests').insert({sender_id:me.id, receiver_id:id});
+  if (error) {
+    note(error.code === '23505' ? 'Request already sent or friendship already exists.' : 'Request failed: ' + error.message);
+    return;
+  }
+  note('Friend request sent!');
+  await loadFriends();
+}
+async function loadFriends() {
+  $('requests').textContent = 'Loading requests…';
+  $('friendlist').textContent = 'Loading friends…';
+  const {data, error} = await db.from('zyvro_friend_requests')
+    .select('*').or(`sender_id.eq.${me.id},receiver_id.eq.${me.id}`)
+    .order('created_at', {ascending:false}).limit(100);
+  if (error) {
+    $('requests').textContent = 'Friend request error: ' + error.message;
+    $('friendlist').textContent = 'Could not load friends.';
+    return;
+  }
+  const rows = data || [];
+  const incoming = rows.filter(r => r.receiver_id === me.id && r.status === 'pending');
+  const accepted = rows.filter(r => r.status === 'accepted' && (r.sender_id === me.id || r.receiver_id === me.id));
+  try { await getProfiles(rows.map(r => r.sender_id === me.id ? r.receiver_id : r.sender_id)); }
+  catch (e) { $('requests').textContent = 'Profile lookup error: ' + e.message; return; }
+  $('requests').innerHTML = incoming.map(r => playerRow(profiles[r.sender_id],
+    `<button class="btn" type="button" data-accept="${esc(r.id)}">Accept</button>`)).join('') || '<div class="muted">No pending requests.</div>';
+  $('requests').querySelectorAll('[data-accept]').forEach(b => b.addEventListener('click', () => acceptRequest(b.dataset.accept)));
+  friends = accepted.map(r => ({id:r.sender_id === me.id ? r.receiver_id : r.sender_id, requestId:r.id}));
+  $('friendlist').innerHTML = friends.map(f => playerRow(profiles[f.id],
+    `<button class="btn" type="button" data-chat="${esc(f.id)}">Chat</button>`)).join('') || '<div class="muted">No friends yet. Search players above and send a request.</div>';
+  $('friendlist').querySelectorAll('[data-chat]').forEach(b => b.addEventListener('click', () => { showTab('private'); openChat(b.dataset.chat); }));
+}
+async function acceptRequest(id) {
+  const {error} = await db.from('zyvro_friend_requests')
+    .update({status:'accepted', updated_at:new Date().toISOString()}).eq('id', id).eq('receiver_id', me.id);
+  if (error) { note('Accept failed: ' + error.message); return; }
+  note('Friend added!');
+  await loadFriends();
+}
+async function loadChatFriends() {
+  await loadFriends();
+  $('chatfriends').innerHTML = friends.map(f =>
+    `<button class="tab" style="margin:3px" type="button" data-open-chat="${esc(f.id)}">${esc(profiles[f.id]?.username || 'Player')}</button>`
+  ).join('') || '<div class="muted">Add a friend and accept the request first.</div>';
+  $('chatfriends').querySelectorAll('[data-open-chat]').forEach(b => b.addEventListener('click', () => openChat(b.dataset.openChat)));
+}
+async function openChat(id) {
+  selected = id;
+  if (!profiles[id]) { try { await getProfiles([id]); } catch(e) { note(e.message); } }
+  $('chatwith').textContent = 'Chat with ' + (profiles[id]?.username || 'Player');
+  await loadPrivate();
+}
+async function loadPrivate() {
+  if (!selected) return;
+  const {data, error} = await db.from('zyvro_messages').select('*')
+    .or(`and(sender_id.eq.${me.id},receiver_id.eq.${selected}),and(sender_id.eq.${selected},receiver_id.eq.${me.id})`)
+    .order('created_at', {ascending:true}).limit(100);
+  if (error) { $('privatemessages').textContent = 'Chat error: ' + error.message; return; }
+  try { await getProfiles((data || []).map(m => m.sender_id)); }
+  catch(e) { note('Could not load chat profiles: ' + e.message); }
+  $('privatemessages').innerHTML = (data || []).map(m =>
+    `<div class="msg ${m.sender_id===me.id?'mine':''}"><b>${esc(profiles[m.sender_id]?.username || 'Player')}</b><br>${esc(m.body)}<div class="muted">${m.created_at ? new Date(m.created_at).toLocaleString() : ''}</div></div>`
+  ).join('') || '<div class="muted">No messages yet. Say hello!</div>';
+  $('privatemessages').scrollTop = $('privatemessages').scrollHeight;
+}
+async function sendPrivate() {
+  const body = $('privatetext').value.trim();
+  if (!selected) { note('Pehle accepted friend select karo.'); return; }
+  if (!body) return;
+  $('sendPrivateBtn').disabled = true;
+  const {error} = await db.from('zyvro_messages').insert({sender_id:me.id, receiver_id:selected, body});
+  $('sendPrivateBtn').disabled = false;
+  if (error) { note('Message send failed: ' + error.message); return; }
+  $('privatetext').value = '';
+  await loadPrivate();
+}
+async function loadRoom() {
+  const {data, error} = await db.from('zyvro_room_messages').select('*')
+    .eq('room', 'main').order('created_at', {ascending:false}).limit(60);
+  if (error) { $('roommessages').textContent = 'Room error: ' + error.message; return; }
+  const rows = (data || []).reverse();
+  try { await getProfiles(rows.map(m => m.sender_id)); }
+  catch(e) { note('Could not load room profiles: ' + e.message); }
+  $('roommessages').innerHTML = rows.map(m =>
+    `<div class="msg ${m.sender_id===me.id?'mine':''}"><b>${esc(profiles[m.sender_id]?.username || 'Player')}</b>: ${esc(m.body)}<div class="muted">${m.created_at ? new Date(m.created_at).toLocaleTimeString() : ''}</div></div>`
+  ).join('') || '<div class="muted">Room is quiet. Send the first message!</div>';
+  $('roommessages').scrollTop = $('roommessages').scrollHeight;
+}
+async function sendRoom() {
+  const body = $('roomtext').value.trim();
+  if (!body) return;
+  $('sendRoomBtn').disabled = true;
+  const {error} = await db.from('zyvro_room_messages').insert({sender_id:me.id, room:'main', body});
+  $('sendRoomBtn').disabled = false;
+  if (error) { note('Room message failed: ' + error.message); return; }
+  $('roomtext').value = '';
+  await loadRoom();
+}
+boot().catch(error => {
+  console.error(error);
+  fail('Setup error: ' + (error && error.message ? error.message : String(error)) + '. Check Supabase URL/key, login session, and table permissions.');
+});
+})();
+</script>
+</body>
+</html>
