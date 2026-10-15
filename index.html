@@ -40,15 +40,9 @@ body:not(.auth-ready) .app{display:none}
  const URL = "https://sgpefzdgwayjxpdjetaj.supabase.co";
  const KEY = "sb_publishable_k-rm9Vf61Hv11z9yvOwalA_vtRGLDdm";
  function fail(message){
-   const showError=()=>{
-     if(!document.body) return;
-     document.body.classList.add("auth-ready");
-     let box=document.querySelector(".auth-error");
-     if(!box){box=document.createElement("div");box.className="auth-error";document.body.prepend(box);}
-     box.textContent=message;
-   };
-   if(document.body) showError();
-   else document.addEventListener("DOMContentLoaded",showError,{once:true});
+   document.body.classList.add("auth-ready");
+   const box=document.createElement("div");box.className="auth-error";box.textContent=message;
+   document.body.prepend(box);
  }
  try {
    if(!window.supabase){fail("Supabase library load nahi hui. Internet check karke page refresh karein.");return;}
@@ -78,14 +72,36 @@ body:not(.auth-ready) .app{display:none}
 </head><body>
 <main class="app">
 <header class="top"><div class="logo">ZYVR<i>O•</i></div><div class="wallet">🪙 <span id="balance">1000</span> coins</div></header>
-<nav class="social-shortcut" aria-label="Social features"><a href="./social.html">👥 Social · Friends · Chat</a></nav>
-<div class="demo">VIRTUAL MODE · Practice coins only. No real-money betting or cash prizes.</div><button class="wallet-reset" onclick="resetDemoCoins()">↻ Reset virtual coins to 1000</button>
-<section class="banner"><div><div class="how">▣ How to play</div><div class="game-name">PRISM • 30 SEC</div><div class="balls" id="balls"><span class="mini">8</span><span class="mini">3</span><span class="mini Green">1</span><span class="mini">6</span><span class="mini Violet">0</span></div></div><div><div class="timerlabel">Time remaining</div><div class="clock"><span class="digit" id="m1">0</span><span class="digit" id="m2">0</span><span class="digit">:</span><span class="digit" id="s1">3</span><span class="digit" id="s2">0</span></div><div class="period" id="period">2026101300001001</div></div></section>
-<section class="panel"><div class="colors"><button class="btn green" data-market="color" data-val="Aqua" onclick="pick(this)">AQUA</button><button class="btn violet" data-market="color" data-val="Fuchsia" onclick="pick(this)">FUCHSIA</button><button class="btn red" data-market="color" data-val="Gold" onclick="pick(this)">GOLD</button></div>
-<div class="numbers" id="numbers"></div>
-<div class="stake-row"><button class="stake random" onclick="randomPick()">Random</button><button class="stake sel" data-stake="1" onclick="setStake(this)">X1</button><button class="stake" data-stake="5" onclick="setStake(this)">X5</button><button class="stake" data-stake="10" onclick="setStake(this)">X10</button><button class="stake" data-stake="20" onclick="setStake(this)">X20</button><button class="stake" data-stake="50" onclick="setStake(this)">X50</button><button class="stake" data-stake="100" onclick="setStake(this)">X100</button></div>
-<div class="sizes"><button class="big" data-market="size" data-val="Big" onclick="pick(this)">Big</button><button class="small" data-market="size" data-val="Small" onclick="pick(this)">Small</button></div>
-<div class="hint">Choose one or more predictions in this round. X1–X100 is the virtual stake for each selected option.</div>
-<button class="place" id="place" onclick="openSheet()">Place bet</button><div class="status" id="status">Select number, color or Big/Small, then place a demo bet.</div></section>
+<div class="social-shortcut"><a href="./social.html">👥 Social · Friends · Chat</a></div>
+<div class="demo">VIRTUAL MODE · Practice coins only. No real-money betting or cash prizes.</div>
+<button class="wallet-reset" id="resetCoins">↻ Reset virtual coins to 1000</button>
+<section class="banner">
+ <div><div class="how">▣ How to play</div><div class="game-name">PRISM • 30 SEC</div><div class="balls" id="balls"></div></div>
+ <div><div class="timerlabel">Time remaining</div><div class="clock"><span class="digit" id="m1">0</span><span class="digit" id="m2">0</span><span class="digit">:</span><span class="digit" id="s1">3</span><span class="digit" id="s2">0</span></div><div class="period" id="period">Loading round…</div></div>
+</section>
+<section class="panel">
+ <div class="colors">
+  <button class="btn green" data-market="color" data-val="Aqua">AQUA</button>
+  <button class="btn violet" data-market="color" data-val="Fuchsia">FUCHSIA</button>
+  <button class="btn red" data-market="color" data-val="Gold">GOLD</button>
+ </div>
+ <div class="numbers" id="numbers"></div>
+ <div class="stake-row">
+  <button class="stake random" id="randomPick">Random</button>
+  <button class="stake sel" data-stake="1">X1</button><button class="stake" data-stake="5">X5</button>
+  <button class="stake" data-stake="10">X10</button><button class="stake" data-stake="20">X20</button>
+  <button class="stake" data-stake="50">X50</button><button class="stake" data-stake="100">X100</button>
+ </div>
+ <div class="sizes"><button class="big" data-market="size" data-val="Big">Big</button><button class="small" data-market="size" data-val="Small">Small</button></div>
+ <div class="hint">Choose one or more predictions. X1–X100 is the virtual stake for each selected option.</div>
+ <button class="place" id="place">Place bet</button><div class="status" id="status">Choose a number, color, or Big/Small.</div>
+</section>
 <section class="panel"><div class="label">Last round · Profit / Loss</div><div class="pl" id="pl" style="color:#758096">No round settled yet.</div></section>
-<section clas
+<section class="panel">
+ <div class="historytools"><div class="label" style="margin:0">Round results</div><button class="refreshbtn" id="refreshHistory">⟳ Update history</button></div>
+ <div class="subheading">Recent outcomes · latest first</div>
+ <div class="tablehead"><span>Round</span><span>Result</span><span>Color</span><span>Size</span></div>
+ <div id="history"></div>
+</section>
+<section class="panel"><div class="label">My bet history</div><div class="ledgerhead"><span>Selection</span><span>Stake</span><span>Result</span><span>Net</span></div><div id="ledger"><div class="emptyledger">No bets yet.</div></div></section>
+<div class="foot">ZYVRO · Virtual practice game only · No real-money betting or cash pr
