@@ -32,6 +32,7 @@ body:not(.auth-ready) .app{display:none}
 .authbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;margin:0 0 10px;border:1px solid #293b5a;border-radius:12px;background:#111a2d;color:#cbd6eb;font-size:12px;overflow-wrap:anywhere}
 .authbar .auth-actions{display:flex;gap:6px;flex-shrink:0}.authbar button{border:1px solid #3a5579;border-radius:8px;padding:7px 10px;background:#1b2b45;color:#c8fff9;font-weight:800}.authbar .profile-btn{background:linear-gradient(120deg,#29e0d0,#248ce5);color:#061c29;border-color:#29e0d0}.authbar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .auth-error{margin:20px auto;max-width:520px;padding:16px;color:#ffd4dc;background:#451e2b;border-radius:12px;font:14px Arial,sans-serif}
+.social-shortcut{margin:0 0 10px;padding:10px 12px;border:1px solid #29e0d0;border-radius:12px;background:linear-gradient(100deg,#153f50,#20254d);text-align:center;font-weight:900}.social-shortcut a{display:block;color:#8ffff6;text-decoration:none;padding:4px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -45,7 +46,7 @@ body:not(.auth-ready) .app{display:none}
  }
  try {
    if(!window.supabase){fail("Supabase library load nahi hui. Internet check karke page refresh karein.");return;}
-   const client=window.supabase.createClient(URL,KEY); window.zyvroClient=client;
+   const client=window.supabase.createClient(URL,KEY);
    const {data,error}=await client.auth.getSession();
    if(error) throw error;
    if(!data.session){window.location.replace("./auth.html");return;}
@@ -58,9 +59,10 @@ body:not(.auth-ready) .app{display:none}
        const actions=document.createElement("div");actions.className="auth-actions";
        const profile=document.createElement("button");profile.type="button";profile.className="profile-btn";profile.textContent="👤 Profile";
        profile.addEventListener("click",()=>{window.location.href="./profile_premium_v2.html";});
+       const social=document.createElement("button");social.type="button";social.textContent="👥 Social";social.addEventListener("click",()=>{window.location.href="./social.html";});
        const out=document.createElement("button");out.type="button";out.textContent="Log out";
        out.addEventListener("click",async()=>{out.disabled=true;out.textContent="Logging out…";const {error}=await client.auth.signOut();if(error){out.disabled=false;out.textContent="Log out";alert("Logout failed: "+error.message);return;}window.location.replace("./auth.html");});
-       actions.append(profile,out);bar.append(email,actions);header.insertAdjacentElement("afterend",bar);
+       actions.append(profile,social,out);bar.append(email,actions);header.insertAdjacentElement("afterend",bar);
      }
    };
    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",revealGame,{once:true}); else revealGame();
@@ -70,6 +72,7 @@ body:not(.auth-ready) .app{display:none}
 </head><body>
 <main class="app">
 <header class="top"><div class="logo">ZYVR<i>O•</i></div><div class="wallet">🪙 <span id="balance">1000</span> coins</div></header>
+<div class="social-shortcut"><a href="./social.html">👥 Social · Friends · Chat</a></div>
 <div class="demo">VIRTUAL MODE · Practice coins only. No real-money betting or cash prizes.</div><button class="wallet-reset" onclick="resetDemoCoins()">↻ Reset virtual coins to 1000</button>
 <section class="banner"><div><div class="how">▣ How to play</div><div class="game-name">PRISM • 30 SEC</div><div class="balls" id="balls"><span class="mini">8</span><span class="mini">3</span><span class="mini Green">1</span><span class="mini">6</span><span class="mini Violet">0</span></div></div><div><div class="timerlabel">Time remaining</div><div class="clock"><span class="digit" id="m1">0</span><span class="digit" id="m2">0</span><span class="digit">:</span><span class="digit" id="s1">3</span><span class="digit" id="s2">0</span></div><div class="period" id="period">2026101300001001</div></div></section>
 <section class="panel"><div class="colors"><button class="btn green" data-market="color" data-val="Aqua" onclick="pick(this)">AQUA</button><button class="btn violet" data-market="color" data-val="Fuchsia" onclick="pick(this)">FUCHSIA</button><button class="btn red" data-market="color" data-val="Gold" onclick="pick(this)">GOLD</button></div>
@@ -79,6 +82,4 @@ body:not(.auth-ready) .app{display:none}
 <div class="hint">Choose one or more predictions in this round. X1–X100 is the virtual stake for each selected option.</div>
 <button class="place" id="place" onclick="openSheet()">Place bet</button><div class="status" id="status">Select number, color or Big/Small, then place a demo bet.</div></section>
 <section class="panel"><div class="label">Last round · Profit / Loss</div><div class="pl" id="pl" style="color:#758096">No round settled yet.</div></section>
-<section class="panel"><div class="historytools"><div class="label" style="margin:0">Round results</div><button class="refreshbtn" onclick="refreshHistory()">⟳ Update history</button></div><div class="subheading">Recent outcomes · latest first</div><div class="tablehead"><span>Period</span><span>Number</span><span>Big / Small</span><span>Color</span></div><div id="history"></div></section>
-<section class="panel"><div class="label">My bet history</div><div class="subheading">Every bet, stake, result and net profit/loss saved on this browser.</div><div class="ledgerhead"><span>Round / Pick</span><span>Stake</span><span>Result</span><span>Net P/L</span></div><div id="betledger"><div class="emptyledger">Your bet records will appear here after the first round.</div></div></section>
-<div
+<section class="panel"><div class="historytools"><div class="label" style="margin:0">Round results</div><button class="refreshbtn" onclick="refreshHistory()">⟳ Update history</button></div><div class="subheading">Recent outcomes · latest first</div><div class="tablehead"><span>
