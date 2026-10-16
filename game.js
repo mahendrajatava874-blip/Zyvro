@@ -1,11 +1,17 @@
-(() => {
-  'use strict';
+(function () {
+  "use strict";
+
+  /* =========================================
+     ZYVRO PRISM ARCADE
+     Virtual-credit demo game
+     No real-money transactions
+  ========================================= */
 
   const $ = id => document.getElementById(id);
 
-  const BAL_KEY = 'zyvro_prism_balance_v4';
-  const BET_KEY = 'zyvro_prism_bets_v4';
-  const PATTERN_KEY = 'zyvro_prism_pattern_v4';
+  const BALANCE_KEY = "zyvro_prism_balance_v4";
+  const BET_KEY = "zyvro_prism_bets_v4";
+  const PATTERN_KEY = "zyvro_prism_pattern_v4";
 
   let balance = readBalance();
   let stake = 1;
@@ -13,17 +19,30 @@
   let bets = readArray(BET_KEY);
   let pattern = readPattern();
   let currentPeriod = null;
+  let lastSettled = null;
+
+  /* ---------- STORAGE ---------- */
 
   function readBalance() {
-    const n = Number(localStorage.getItem(BAL_KEY));
-    return Number.isFinite(n) && n >= 0 ? n : 1000;
+    const saved = localStorage.getItem(BALANCE_KEY);
+
+    if (saved === null) return 1000;
+
+    const value = Number(saved);
+
+    return Number.isFinite(value) && value >= 0
+      ? value
+      : 1000;
   }
 
   function readArray(key) {
     try {
-      const value = JSON.parse(localStorage.getItem(key) || '[]');
+      const value = JSON.parse(
+        localStorage.getItem(key) || "[]"
+      );
+
       return Array.isArray(value) ? value : [];
-    } catch {
+    } catch (error) {
       return [];
     }
   }
@@ -32,9 +51,20 @@
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      console.error('Storage error:', error);
+      console.error("Storage error:", error);
+      setStatus("Browser storage error. Refresh the page.");
     }
   }
+
+  function saveBalance() {
+    localStorage.setItem(BALANCE_KEY, String(balance));
+
+    if ($("balance")) {
+      $("balance").textContent = String(balance);
+    }
+  }
+
+  /* ---------- ROUND SYSTEM ---------- */
 
   function periodInfo() {
     const seconds = Math.floor(Date.now() / 1000);
@@ -46,35 +76,49 @@
   }
 
   function colorFor(number) {
-    if (number === 0 || number === 5) return 'Fuchsia';
-    if ([1, 3, 7, 9].includes(number)) return 'Aqua';
-    return 'Gold';
+    if (number === 0 || number === 5) {
+      return "Fuchsia";
+    }
+
+    if ([1, 3, 7, 9].includes(number)) {
+      return "Aqua";
+    }
+
+    return "Gold";
   }
 
   function sizeFor(number) {
-    return number >= 5 ? 'Big' : 'Small';
+    return number >= 5 ? "Big" : "Small";
   }
 
   function makePattern(startPeriod) {
-    let seed =
-      (Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0;
+    let seed = (
+      Date.now() ^
+      Math.floor(Math.random() * 0x7fffffff)
+    ) >>> 0;
 
     if (!seed) seed = 123456789;
 
     const results = [];
 
     for (let i = 0; i < 10; i++) {
-      seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+      seed = (
+        Math.imul(seed, 1664525) + 1013904223
+      ) >>> 0;
+
       results.push(seed % 10);
     }
 
-    return { startPeriod, results };
+    return {
+      startPeriod: startPeriod,
+      results: results
+    };
   }
 
   function readPattern() {
     try {
       const saved = JSON.parse(
-        localStorage.getItem(PATTERN_KEY) || 'null'
+        localStorage.getItem(PATTERN_KEY) || "null"
       );
 
       if (
@@ -86,13 +130,14 @@
         return saved;
       }
     } catch (error) {
-      console.warn('Creating a new demo pattern.');
+      console.warn("Creating a new demo pattern.");
     }
 
-    const pattern = makePattern(periodInfo().period);
-    store(PATTERN_KEY, pattern);
+    const newPattern = makePattern(periodInfo().period);
 
-    return pattern;
+    store(PATTERN_KEY, newPattern);
+
+    return newPattern;
   }
 
   function ensurePattern() {
@@ -112,178 +157,235 @@
   function resultFor(period) {
     const offset = period - pattern.startPeriod;
 
-    if (offset >= 0 && offset < 10) {
+    if (
+      offset >= 0 &&
+      offset < 10 &&
+      Number.isInteger(pattern.results[offset])
+    ) {
       return pattern.results[offset];
     }
 
-    let value =
-      (Math.imul(Number(period) >>> 0, 2147483647) || 148271) >>> 0;
-
-    return value % 10;
+    return 0;
   }
+
+  /* ---------- STATUS ---------- */
 
   function setStatus(message) {
-    const status = $('status');
-
-    if (status) {
-      status.textContent = message;
+    if ($("status")) {
+      $("status").textContent = message;
     }
   }
 
-  function saveBalance() {
-    try {
-      localStorage.setItem(BAL_KEY, String(balance));
-    } catch (error) {
-      console.error('Could not save balance:', error);
-    }
-
-    if ($('balance')) {
-      $('balance').textContent = String(balance);
-    }
-  }
+  /* ---------- NUMBER BUTTONS ---------- */
 
   function renderNumbers() {
-    const root = $('numbers');
+    const container = $("numbers");
 
-    if (!root) return;
+    if (!container) return;
 
-    root.innerHTML = '';
+    container.innerHTML = "";
 
-    for (let n = 0; n < 10; n++) {
-      const button = document.createElement('button');
+    for (let number = 0; number < 10; number++) {
+      const button = document.createElement("button");
 
-      button.type = 'button';
-      button.className = 'num ' + colorFor(n).toLowerCase();
-      button.dataset.market = 'number';
-      button.dataset.val = String(n);
-      button.textContent = String(n);
+      button.type = "button";
+      button.className = "num " + colorFor(number);
+      button.dataset.market = "number";
+      button.dataset.val = String(number);
+      button.textContent = String(number);
 
-      root.appendChild(button);
+      button.addEventListener("click", function () {
+        pick(button);
+      });
+
+      container.appendChild(button);
     }
   }
 
   function renderBalls(number) {
-    const root = $('balls');
+    const container = $("balls");
 
-    if (!root) return;
+    if (!container) return;
 
-    root.innerHTML = '';
+    let html = "";
 
     for (let i = 0; i < 5; i++) {
       const value = (number + i * 3) % 10;
-      const ball = document.createElement('span');
 
-      ball.className = 'mini ' + colorFor(value).toLowerCase();
-      ball.textContent = String(value);
-
-      root.appendChild(ball);
+      html +=
+        '<span class="mini ' +
+        colorFor(value) +
+        '">' +
+        value +
+        "</span>";
     }
+
+    container.innerHTML = html;
   }
 
+  /* ---------- SELECTIONS ---------- */
+
   function renderSelections() {
-    document.querySelectorAll('[data-market]').forEach(button => {
-      const selected = selections.some(
-        item =>
+    document
+      .querySelectorAll("[data-market]")
+      .forEach(button => {
+        const selected = selections.some(item =>
           item.market === button.dataset.market &&
           item.val === button.dataset.val
-      );
+        );
 
-      button.classList.toggle('sel', selected);
-    });
+        button.classList.toggle("sel", selected);
+        button.classList.toggle("active", selected);
+      });
 
     setStatus(
       selections.length
         ? selections.length +
-            ' prediction(s) selected · ' +
-            stake * selections.length +
-            ' virtual coin(s) total.'
-        : 'Choose a number, color, or Big/Small.'
+          " prediction(s) selected · " +
+          stake +
+          " coin(s) each."
+        : "Choose a number, color, or Big/Small."
     );
   }
 
   function pick(button) {
     const market = button.dataset.market;
-    const value = button.dataset.val;
+    const val = button.dataset.val;
 
-    const index = selections.findIndex(
-      item => item.market === market && item.val === value
+    if (!market || val === undefined) return;
+
+    const index = selections.findIndex(item =>
+      item.market === market && item.val === val
     );
 
     if (index >= 0) {
       selections.splice(index, 1);
     } else {
-      selections.push({ market, val: value });
+      selections.push({
+        market: market,
+        val: val
+      });
     }
 
     renderSelections();
   }
 
+  function setStake(value) {
+    stake = Number(value);
+
+    if (!Number.isFinite(stake) || stake < 1) {
+      stake = 1;
+    }
+
+    document.querySelectorAll("[data-stake]").forEach(button => {
+      button.classList.toggle(
+        "sel",
+        Number(button.dataset.stake) === stake
+      );
+
+      button.classList.toggle(
+        "active",
+        Number(button.dataset.stake) === stake
+      );
+    });
+
+    renderSelections();
+  }
+
+  /* ---------- BET HISTORY ---------- */
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, character => {
+      const map = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      };
+
+      return map[character];
+    });
+  }
+
+  function renderLedger() {
+    const container = $("ledger");
+
+    if (!container) return;
+
+    if (!bets.length) {
+      container.innerHTML =
+        '<div class="emptyledger">No bets yet.</div>';
+      return;
+    }
+
+    container.innerHTML = bets.slice(0, 30).map(bet => {
+      const resultText = !bet.done
+        ? "Pending"
+        : bet.net >= 0
+          ? "Settled"
+          : "Lost";
+
+      const netText = !bet.done
+        ? "—"
+        : (bet.net >= 0 ? "+" : "") + bet.net;
+
+      return (
+        '<div class="ledgerrow">' +
+          "<span>" + escapeHtml(bet.label) + "</span>" +
+          "<span>" + escapeHtml(bet.cost) + "</span>" +
+          "<span>" + resultText + "</span>" +
+          "<span>" + netText + "</span>" +
+        "</div>"
+      );
+    }).join("");
+  }
+
   function renderHistory() {
-    const root = $('history');
+    const container = $("history");
 
-    if (!root) return;
+    if (!container) return;
 
-    const rows = [];
     const q = periodInfo();
+    const rows = [];
 
     for (
-      let p = q.period - 1;
-      p >= Math.max(0, q.period - 10);
-      p--
+      let period = q.period - 1;
+      period >= Math.max(pattern.startPeriod, q.period - 10);
+      period--
     ) {
-      const number = resultFor(p);
+      const number = resultFor(period);
 
       rows.push({
-        period: p,
-        number,
+        period: period,
+        number: number,
         color: colorFor(number),
         size: sizeFor(number)
       });
     }
 
-    root.innerHTML = rows.length
-      ? rows.map(row => `
-          <div class="historyrow">
-            <span>${row.period}</span>
-            <strong>${row.number}</strong>
-            <span>${row.color}</span>
-            <span>${row.size}</span>
-          </div>
-        `).join('')
-      : '<div class="empty">Results appear after each round finishes.</div>';
-  }
+    if (!rows.length) {
+      container.innerHTML =
+        '<div class="emptyledger">' +
+        "Results will appear here after a round finishes." +
+        "</div>";
 
-  function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, character => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    })[character]);
-  }
-
-  function renderLedger() {
-    const root = $('ledger');
-
-    if (!root) return;
-
-    if (!bets.length) {
-      root.innerHTML = '<div class="empty">No bets yet.</div>';
       return;
     }
 
-    root.innerHTML = bets.slice(0, 30).map(bet => `
-      <div class="ledgerrow">
-        <span>${escapeHTML(bet.label)}</span>
-        <span>${bet.cost}</span>
-        <span>${bet.done ? (bet.net >= 0 ? 'Won' : 'Lost') : 'Pending'}</span>
-        <span class="${bet.done ? (bet.net >= 0 ? 'profit' : 'loss') : ''}">
-          ${bet.done ? (bet.net >= 0 ? '+' : '') + bet.net : '—'}
-        </span>
-      </div>
-    `).join('');
+    container.innerHTML = rows.slice(0, 10).map(row => {
+      return (
+        '<div class="historyrow">' +
+          "<span>" + row.period + "</span>" +
+          '<span class="hnum">' + row.number + "</span>" +
+          '<span class="tag">' + row.color + "</span>" +
+          '<span class="tag">' + row.size + "</span>" +
+        "</div>"
+      );
+    }).join("");
   }
+
+  /* ---------- SETTLE BETS ---------- */
 
   function settleBets(period) {
     const number = resultFor(period);
@@ -291,32 +393,39 @@
     const size = sizeFor(number);
 
     let changed = false;
+    let netTotal = 0;
 
     bets.forEach(bet => {
-      if (!bet.done && Number(bet.period) === Number(period)) {
-        let payout = 0;
-
-        bet.items.forEach(item => {
-          const won =
-            (item.market === 'number' && Number(item.val) === number) ||
-            (item.market === 'color' && item.val === color) ||
-            (item.market === 'size' && item.val === size);
-
-          if (won) {
-            payout += bet.stake * 2;
-          }
-        });
-
-        bet.done = true;
-        bet.number = number;
-        bet.color = color;
-        bet.size = size;
-        bet.payout = payout;
-        bet.net = payout - bet.cost;
-
-        balance += payout;
-        changed = true;
+      if (bet.done || Number(bet.period) !== Number(period)) {
+        return;
       }
+
+      let payout = 0;
+
+      bet.items.forEach(item => {
+        const won =
+          (item.market === "number" &&
+            Number(item.val) === number) ||
+          (item.market === "color" &&
+            item.val === color) ||
+          (item.market === "size" &&
+            item.val === size);
+
+        if (won) {
+          payout += bet.stake * 2;
+        }
+      });
+
+      bet.done = true;
+      bet.number = number;
+      bet.color = color;
+      bet.size = size;
+      bet.payout = payout;
+      bet.net = payout - bet.cost;
+
+      balance += payout;
+      netTotal += bet.net;
+      changed = true;
     });
 
     if (changed) {
@@ -324,55 +433,74 @@
       store(BET_KEY, bets);
       renderLedger();
 
-      if ($('pl')) {
-        const net = bets
-          .filter(bet => bet.done && Number(bet.period) === Number(period))
-          .reduce((sum, bet) => sum + bet.net, 0);
+      if ($("pl")) {
+        $("pl").textContent =
+          "Round " + period +
+          " · Result " + number +
+          " · " + color +
+          " · " + size +
+          " · Net " +
+          (netTotal >= 0 ? "+" : "") +
+          netTotal + " coins";
 
-        $('pl').textContent =
-          'Round ' + period + ': ' +
-          number + ' · ' + color + ' · ' + size +
-          '. Net ' + net + ' coins.';
+        $("pl").style.color =
+          netTotal >= 0 ? "#42d6b5" : "#ff7272";
       }
+
+      lastSettled = period;
     }
   }
+
+  /* ---------- BET CONFIRMATION ---------- */
 
   function openSheet() {
     const q = periodInfo();
 
     if (q.remaining <= 5) {
-      setStatus('Betting closes during the last 5 seconds.');
+      setStatus("Betting closes during the last 5 seconds.");
       return;
     }
 
     if (!selections.length) {
-      setStatus('Please choose a number, color, or Big/Small first.');
+      setStatus("Please choose a number, color, or Big/Small first.");
       return;
     }
 
     const cost = stake * selections.length;
 
     if (cost > balance) {
-      setStatus('Not enough virtual coins. Reduce stake or reset coins.');
+      setStatus("Not enough virtual coins. Reduce the stake.");
       return;
     }
 
-    $('sheetTitle').textContent = selections
-      .map(item =>
-        item.market === 'number' ? 'Number ' + item.val : item.val
-      )
-      .join(', ');
+    if ($("sheetTitle")) {
+      $("sheetTitle").textContent = selections.map(item => {
+        return item.market === "number"
+          ? "Number " + item.val
+          : item.val;
+      }).join(", ");
+    }
 
-    $('sheetStake').textContent = stake + ' coin(s)';
-    $('sheetCount').textContent = String(selections.length);
-    $('sheetTotal').textContent = cost + ' coins';
+    if ($("sheetStake")) {
+      $("sheetStake").textContent = stake + " coin(s)";
+    }
 
-    $('sheetback').classList.add('show');
+    if ($("sheetCount")) {
+      $("sheetCount").textContent = String(selections.length);
+    }
+
+    if ($("sheetTotal")) {
+      $("sheetTotal").textContent = cost + " coins";
+    }
+
+    if ($("sheetback")) {
+      $("sheetback").classList.add("show");
+    }
   }
 
   function closeSheet() {
-    if ($('sheetback')) {
-      $('sheetback').classList.remove('show');
+    if ($("sheetback")) {
+      $("sheetback").classList.remove("show");
     }
   }
 
@@ -386,23 +514,33 @@
       cost > balance
     ) {
       closeSheet();
-      setStatus('Bet could not be placed. Check time, selection, and balance.');
+      setStatus("Bet could not be placed. Check your selection and balance.");
       return;
     }
 
     balance -= cost;
     saveBalance();
 
+    const items = selections.map(item => ({
+      market: item.market,
+      val: item.val
+    }));
+
+    const label = items.map(item =>
+      item.market === "number"
+        ? "#" + item.val
+        : item.val
+    ).join(", ");
+
     bets.unshift({
       id: Date.now(),
       period: q.period,
-      items: selections.map(item => ({ ...item })),
-      label: selections.map(item =>
-        item.market === 'number' ? '#' + item.val : item.val
-      ).join(', '),
-      stake,
-      cost,
+      items: items,
+      label: label,
+      stake: stake,
+      cost: cost,
       done: false,
+      payout: 0,
       net: 0
     });
 
@@ -416,57 +554,10 @@
     selections = [];
     renderSelections();
 
-    setStatus('Virtual bet placed for round ' + q.period + '.');
+    setStatus("Virtual bet placed for round " + q.period + ".");
   }
 
-  function updateClock() {
-    const q = ensurePattern();
-
-    const text = String(q.remaining).padStart(2, '0');
-
-    if ($('m1')) $('m1').textContent = '0';
-    if ($('m2')) $('m2').textContent = '0';
-    if ($('s1')) $('s1').textContent = text[0];
-    if ($('s2')) $('s2').textContent = text[1];
-
-    if ($('period')) {
-      $('period').textContent = String(q.period);
-    }
-
-    if ($('roundStatus')) {
-      $('roundStatus').textContent =
-        q.remaining <= 5
-          ? 'Betting closes in ' + q.remaining + ' second(s).'
-          : 'Practice round is live.';
-    }
-
-    if (currentPeriod === null) {
-      currentPeriod = q.period;
-    }
-
-    if (q.period !== currentPeriod) {
-      settleBets(currentPeriod);
-      currentPeriod = q.period;
-
-      selections = [];
-      renderSelections();
-      renderHistory();
-      renderLedger();
-
-      if (q.period >= pattern.startPeriod + 10) {
-        pattern = makePattern(q.period);
-        store(PATTERN_KEY, pattern);
-      }
-    }
-
-    if ($('place')) {
-      $('place').disabled = q.remaining <= 5;
-      $('place').textContent =
-        q.remaining <= 5 ? 'Betting closed' : 'Place bet';
-    }
-
-    renderBalls(resultFor(q.period));
-  }
+  /* ---------- REFRESH GAME ---------- */
 
   function refreshGame() {
     pattern = makePattern(periodInfo().period);
@@ -480,100 +571,144 @@
     renderLedger();
     updateClock();
 
-    setStatus('Refreshed: a new 10-round demo pattern has started.');
+    setStatus("Demo game refreshed.");
   }
+
+  /* ---------- RESET BALANCE ---------- */
+
+  function resetCoins() {
+    if (!confirm("Reset demo balance to 1000 virtual coins?")) {
+      return;
+    }
+
+    balance = 1000;
+    saveBalance();
+
+    setStatus("Virtual coins reset to 1000.");
+  }
+
+  /* ---------- CLOCK ---------- */
+
+  function updateClock() {
+    const q = ensurePattern();
+
+    const minutes = String(
+      Math.floor(q.remaining / 60)
+    ).padStart(2, "0");
+
+    const seconds = String(
+      q.remaining % 60
+    ).padStart(2, "0");
+
+    if ($("m1")) $("m1").textContent = minutes[0];
+    if ($("m2")) $("m2").textContent = minutes[1];
+    if ($("s1")) $("s1").textContent = seconds[0];
+    if ($("s2")) $("s2").textContent = seconds[1];
+
+    if ($("period")) {
+      $("period").textContent = String(q.period);
+    }
+
+    if (currentPeriod === null) {
+      currentPeriod = q.period;
+    } else if (q.period !== currentPeriod) {
+      settleBets(currentPeriod);
+
+      currentPeriod = q.period;
+      selections = [];
+
+      renderSelections();
+      renderHistory();
+      renderLedger();
+    }
+
+    if ($("place")) {
+      $("place").disabled = q.remaining <= 5;
+
+      $("place").textContent =
+        q.remaining <= 5 ? "Betting closed" : "Place bet";
+    }
+
+    renderBalls(resultFor(q.period - 1));
+  }
+
+  /* ---------- INITIALIZE ---------- */
 
   function init() {
     const required = [
-      'balance',
-      'm1',
-      'm2',
-      's1',
-      's2',
-      'period',
-      'numbers',
-      'history',
-      'ledger',
-      'status',
-      'place',
-      'sheetback',
-      'sheetTitle',
-      'sheetStake',
-      'sheetCount',
-      'sheetTotal',
-      'closeSheet',
-      'cancelBet',
-      'confirmBet',
-      'refreshHistory',
-      'resetCoins',
-      'randomPick',
-      'pl'
+      "balance",
+      "balls",
+      "m1",
+      "m2",
+      "s1",
+      "s2",
+      "period",
+      "numbers",
+      "history",
+      "ledger",
+      "status",
+      "place",
+      "sheetback",
+      "sheetTitle",
+      "sheetStake",
+      "sheetCount",
+      "sheetTotal",
+      "closeSheet",
+      "cancelBet",
+      "confirmBet",
+      "refreshHistory",
+      "resetCoins",
+      "randomPick"
     ];
 
     const missing = required.filter(id => !$(id));
 
     if (missing.length) {
-      console.error('Missing game HTML elements:', missing);
-      setStatus('Game setup error: missing ' + missing.join(', '));
+      console.error("Zyvro missing HTML elements:", missing);
+
+      setStatus(
+        "Game setup error: missing HTML elements: " +
+        missing.join(", ")
+      );
+
       return;
     }
 
     renderNumbers();
 
-    // Attach each market button exactly once.
-    document.querySelectorAll('[data-market]').forEach(button => {
-      button.addEventListener('click', () => pick(button));
+    document.querySelectorAll(
+      '.colors [data-market], .sizes [data-market]'
+    ).forEach(button => {
+      button.addEventListener("click", () => pick(button));
     });
 
-    document.querySelectorAll('[data-stake]').forEach(button => {
-      button.addEventListener('click', () => {
-        stake = Number(button.dataset.stake) || 1;
-
-        document.querySelectorAll('[data-stake]').forEach(item => {
-          item.classList.toggle('active', item === button);
-        });
-
-        renderSelections();
+    document.querySelectorAll("[data-stake]").forEach(button => {
+      button.addEventListener("click", () => {
+        setStake(button.dataset.stake);
       });
     });
 
-    $('randomPick').addEventListener('click', () => {
+    $("randomPick").addEventListener("click", () => {
       selections = [{
-        market: 'number',
+        market: "number",
         val: String(Math.floor(Math.random() * 10))
       }];
 
       renderSelections();
     });
 
-    $('place').addEventListener('click', openSheet);
-    $('closeSheet').addEventListener('click', closeSheet);
-    $('cancelBet').addEventListener('click', closeSheet);
-    $('confirmBet').addEventListener('click', confirmBet);
+    $("place").addEventListener("click", openSheet);
+    $("closeSheet").addEventListener("click", closeSheet);
+    $("cancelBet").addEventListener("click", closeSheet);
+    $("confirmBet").addEventListener("click", confirmBet);
+    $("refreshHistory").addEventListener("click", refreshGame);
+    $("resetCoins").addEventListener("click", resetCoins);
 
-    $('sheetback').addEventListener('click', event => {
-      if (event.target === $('sheetback')) {
+    $("sheetback").addEventListener("click", event => {
+      if (event.target === $("sheetback")) {
         closeSheet();
       }
     });
-
-    $('refreshHistory').addEventListener('click', refreshGame);
-
-    $('resetCoins').addEventListener('click', () => {
-      if (confirm('Reset demo balance to 1000 virtual coins?')) {
-        balance = 1000;
-        saveBalance();
-        setStatus('Virtual coins reset to 1000.');
-      }
-    });
-
-    if ($('howTo')) {
-      $('howTo').addEventListener('click', () => {
-        alert(
-          'Choose a number, color, or Big/Small. Select a virtual stake and tap Place bet. Winning selections return 2× stake. This is a demo using virtual coins only.'
-        );
-      });
-    }
 
     saveBalance();
     renderSelections();
@@ -581,28 +716,18 @@
     renderLedger();
 
     currentPeriod = periodInfo().period;
+
     updateClock();
 
     setInterval(updateClock, 250);
   }
 
-  window.addEventListener('error', event => {
-    setStatus('Game error: ' + (event.message || 'JavaScript error'));
+  window.addEventListener("error", event => {
+    setStatus("Game error: " + (event.message || "JavaScript error"));
   });
 
-  window.addEventListener('unhandledrejection', event => {
-    setStatus(
-      'Game error: ' +
-      String(
-        event.reason && event.reason.message
-          ? event.reason.message
-          : event.reason || 'Async error'
-      )
-    );
-  });
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
   } else {
     init();
   }
