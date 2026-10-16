@@ -1,192 +1,28 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#0b1220">
-<title>Zyvro • Login / Sign Up</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zyvro Auth</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#111d31;--line:#2b3d5a;--text:#eff6ff;--muted:#9eb0cc;--aqua:#28d4c6;--pink:#df4db7;--gold:#ffc45c;--bad:#ffb4b4;--good:#9ff5d7}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#1a3151 0,#0b1220 58%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:18px}
-.card{width:min(100%,480px);background:linear-gradient(145deg,#14243b,#10192a);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 18px 55px #0005}
-.brand{font-weight:950;font-size:34px;letter-spacing:-1px;margin:0}.brand span{color:var(--aqua)}.sub{color:var(--muted);margin:2px 0 22px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}.tab,button{font:inherit;font-weight:800;border:1px solid var(--line);border-radius:12px;padding:12px;background:#1a2941;color:var(--text);cursor:pointer}.tab.active{background:var(--aqua);border-color:var(--aqua);color:#08212a}
-label{display:block;font-weight:700;margin:14px 0 6px}input{display:block;width:100%;padding:14px;border-radius:12px;border:1px solid #3a4d6c;background:#0b1424;color:var(--text);font:inherit;outline:none}input:focus{border-color:var(--aqua);box-shadow:0 0 0 3px #28d4c622}
-.primary{width:100%;margin-top:20px;background:linear-gradient(100deg,var(--aqua),#399de5,var(--pink));border:0;color:#081622;padding:14px}.secondary{width:100%;margin-top:10px;background:transparent}
-.note{font-size:13px;color:var(--muted);margin-top:14px}.message{display:none;margin-top:16px;padding:12px;border-radius:12px;overflow-wrap:anywhere}.message.show{display:block}.message.error{background:#4a202b;color:#ffd7dd;border:1px solid #85404d}.message.ok{background:#143a34;color:var(--good);border:1px solid #287766}.message.info{background:#172d4b;color:#d3e6ff;border:1px solid #31577f}
-.hidden{display:none!important}.small{font-size:13px;color:var(--muted)}a{color:#79e8e0}.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:18px}
-button:disabled{opacity:.55;cursor:wait}
-</style>
-</head>
-<body>
-<main class="card">
-  <h1 class="brand">ZYVR<span>O</span> •</h1>
-  <p class="sub">Sign in or create your free game account.</p>
-
-  <div id="already" class="message info" role="status">
-    You are already signed in. <button id="continueBtn" class="primary" type="button">Continue to game</button>
-  </div>
-
-  <div id="authFormWrap">
-    <div class="tabs">
-      <button type="button" id="loginTab" class="tab active">Log in</button>
-      <button type="button" id="signupTab" class="tab">Create account</button>
-    </div>
-    <form id="authForm" novalidate>
-      <label for="email">Email address</label>
-      <input id="email" name="email" type="email" autocomplete="email" placeholder="Enter email address" required>
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required>
-      <button id="submitBtn" class="primary" type="submit">Log in</button>
-    </form>
-    <button id="backBtn" type="button" class="secondary hidden">Back to login</button>
-    <p class="note" id="formNote">Use the password you created for Zyvro. Never share your password.</p>
-  </div>
-  <div id="message" class="message" role="status" aria-live="polite"></div>
-  <p class="foot">Zyvro is a virtual-credits game. No real-money deposits or cash prizes.</p>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(145deg,#07111f,#0b1425);font-family:Arial,sans-serif;color:#e7edf7}.card{width:100%;max-width:520px;background:#111c2e;border:1px solid #2b3a50;border-radius:26px;padding:28px 22px}h1{text-align:center;color:#43d6a4;font-size:40px}.sub{text-align:center;color:#bdc8d9;margin-bottom:26px}.tabs{display:flex;gap:12px}.tab{flex:1;padding:15px;border:1px solid #34445c;border-radius:13px;background:#18283e;color:#e7edf7;font-size:17px;font-weight:bold}.tab.active,.submit{background:#35ce98;color:#06251c;border-color:#35ce98}label{display:block;margin:18px 0 8px}input{width:100%;padding:16px;border:1px solid #40516a;border-radius:13px;background:#091322;color:white;font-size:17px}.submit{width:100%;padding:17px;margin-top:24px;border:0;border-radius:13px;font-size:19px;font-weight:bold}#message{display:none;margin-top:16px;padding:13px;border-radius:10px;line-height:1.5;overflow-wrap:anywhere}#message.ok{display:block;background:#103a31;color:#b8ffe8}#message.err{display:block;background:#451e2b;color:#ffd4dc}.note{text-align:center;color:#aab7cc;font-size:14px;line-height:1.5;margin-top:22px}
+</style></head><body><main class="card"><h1>ZYVRO</h1><p class="sub">Sign in or create your account</p>
+<div class="tabs"><button type="button" id="loginTab" class="tab active">Login</button><button type="button" id="signupTab" class="tab">Sign Up</button></div>
+<form id="authForm"><label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email" required><label for="password">Password (minimum 6 characters)</label><input id="password" type="password" minlength="6" placeholder="Enter password" required><button id="submitBtn" class="submit" type="submit">Login</button></form><div id="message" role="status"></div><p class="note">Use a new password for Zyvro, not your email password.</p></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 (() => {
-  "use strict";
-
-  // These are the public project URL and publishable key used by this Zyvro project.
-  const SUPABASE_URL = "https://sgpefzdgwayjxpdjetaj.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_k-rm9Vf61Hv11z9yvOwalA_vtRGLDdm";
-
-  const $ = (id) => document.getElementById(id);
-  const form = $("authForm");
-  const submitBtn = $("submitBtn");
-  const loginTab = $("loginTab");
-  const signupTab = $("signupTab");
-  const messageBox = $("message");
-  const formWrap = $("authFormWrap");
-  const alreadyBox = $("already");
-  let mode = "login";
-  let client = null;
-  let busy = false;
-
-  // Resolve the game URL relative to this page so GitHub Pages /Zyvro/ paths are preserved.
-  const gameUrl = new URL("index.html", window.location.href).href;
-
-  function showMessage(text, type = "info") {
-    messageBox.textContent = text;
-    messageBox.className = "message show " + type;
-  }
-  function clearMessage() {
-    messageBox.textContent = "";
-    messageBox.className = "message";
-  }
-  function setBusy(value, label) {
-    busy = value;
-    submitBtn.disabled = value;
-    loginTab.disabled = value;
-    signupTab.disabled = value;
-    submitBtn.textContent = value ? label : (mode === "login" ? "Log in" : "Create account");
-  }
-  function setMode(nextMode) {
-    if (busy) return;
-    mode = nextMode;
-    loginTab.classList.toggle("active", mode === "login");
-    signupTab.classList.toggle("active", mode === "signup");
-    $("password").autocomplete = mode === "login" ? "current-password" : "new-password";
-    $("password").placeholder = mode === "login" ? "Enter password" : "Create password (minimum 6 characters)";
-    submitBtn.textContent = mode === "login" ? "Log in" : "Create account";
-    $("formNote").textContent = mode === "login"
-      ? "Use the password you created for Zyvro. Never share your password."
-      : "After sign up, check your email inbox and spam folder for a confirmation link if email confirmation is enabled.";
-    clearMessage();
-  }
-
-  loginTab.addEventListener("click", () => setMode("login"));
-  signupTab.addEventListener("click", () => setMode("signup"));
-  $("continueBtn").addEventListener("click", () => { window.location.href = gameUrl; });
-
-  async function start() {
-    if (!window.supabase || typeof window.supabase.createClient !== "function") {
-      showMessage("Supabase library load nahi hui. Internet check karke page refresh karein.", "error");
-      submitBtn.disabled = true;
-      return;
-    }
-    if (!SUPABASE_URL.startsWith("https://") || !SUPABASE_KEY.startsWith("sb_publishable_")) {
-      showMessage("Supabase URL ya public publishable key ki setting galat hai.", "error");
-      submitBtn.disabled = true;
-      return;
-    }
-    try {
-      client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-      });
-      const { data, error } = await client.auth.getSession();
-      if (error) throw error;
-      if (data && data.session) {
-        alreadyBox.className = "message show info";
-        formWrap.classList.add("hidden");
-        showMessage("You are already signed in.", "info");
-      }
-    } catch (err) {
-      showMessage("Auth setup error: " + (err && err.message ? err.message : "Unknown error"), "error");
-    }
-  }
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    clearMessage();
-    if (busy) return;
-    if (!client) {
-      showMessage("Supabase connection abhi ready nahi hai. Page refresh karein; agar issue rahe to Supabase URL/key check karni hogi.", "error");
-      return;
-    }
-    const email = $("email").value.trim();
-    const password = $("password").value;
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showMessage("Sahi email address enter karein.", "error");
-      return;
-    }
-    if (password.length < 6) {
-      showMessage("Password kam se kam 6 characters ka hona chahiye.", "error");
-      return;
-    }
-    setBusy(true, mode === "login" ? "Logging in…" : "Creating account…");
-    try {
-      if (mode === "login") {
-        const { data, error } = await client.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        if (!data || !data.session) throw new Error("Login successful response mein session nahi mila.");
-        showMessage("Login successful. Game khul raha hai…", "ok");
-        window.location.replace(gameUrl);
-        return;
-      } else {
-        const emailRedirectTo = gameUrl;
-        const { data, error } = await client.auth.signUp({
-          email, password, options: { emailRedirectTo }
-        });
-        if (error) throw error;
-        if (data && data.session) {
-          showMessage("Account ban gaya. Game khul raha hai…", "ok");
-          window.location.replace(gameUrl);
-          return;
-        }
-        showMessage("Signup request successful. Email inbox/spam mein confirmation link check karein. Confirmation ke baad login karein.", "ok");
-        setMode("login");
-      }
-    } catch (err) {
-      const raw = (err && err.message) ? err.message : "Unknown error";
-      let friendly = raw;
-      if (/invalid login credentials/i.test(raw)) friendly = "Email ya password galat hai.";
-      else if (/email not confirmed/i.test(raw)) friendly = "Email confirm nahi hua. Inbox/spam mein Supabase confirmation email check karein.";
-      else if (/user already registered/i.test(raw)) friendly = "Is email ka account pehle se hai. Log in tab use karein.";
-      else if (/password should be at least/i.test(raw)) friendly = "Password kam se kam 6 characters ka rakhein.";
-      showMessage("Error: " + friendly, "error");
-    } finally {
-      setBusy(false);
-    }
-  });
-
-  start();
+ // Replace text INSIDE quotes only. Keep both quotation marks.
+ const SUPABASE_URL = "https://sgpefzdgwayjxpdjetaj.supabase.co";
+ const SUPABASE_KEY = "sb_publishable_k-rm9Vf61Hv11z9yvOwalA_vtRGLDdm";
+ const msg=document.getElementById("message"),form=document.getElementById("authForm"),emailInput=document.getElementById("email"),passwordInput=document.getElementById("password"),submitBtn=document.getElementById("submitBtn"),loginTab=document.getElementById("loginTab"),signupTab=document.getElementById("signupTab");
+ let mode="login",client=null;
+ function showMessage(t,type){msg.textContent=t;msg.className=type}
+ function setMode(next){mode=next;loginTab.classList.toggle("active",mode==="login");signupTab.classList.toggle("active",mode==="signup");submitBtn.textContent=mode==="login"?"Login":"Create Account";passwordInput.autocomplete=mode==="login"?"current-password":"new-password";msg.textContent="";msg.className=""}
+ loginTab.addEventListener("click",()=>setMode("login"));
+ signupTab.addEventListener("click",()=>setMode("signup"));
+ if(!window.supabase){showMessage("Supabase library load nahi hui. Internet check karein.","err");return}
+ if(SUPABASE_URL.includes("PASTE_")||SUPABASE_KEY.includes("PASTE_")){showMessage("Project URL aur Publishable Key paste karein. Quotes mat hatayein. Secret/service_role key kabhi use na karein.","err");return}
+ try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){showMessage("Supabase URL/Publishable Key check karein.","err");return}
+ form.addEventListener("submit",async event=>{event.preventDefault();const email=emailInput.value.trim(),password=passwordInput.value;if(!email||password.length<6){showMessage("Valid email aur minimum 6-character password daalein.","err");return}
+ submitBtn.disabled=true;submitBtn.textContent=mode==="login"?"Logging in...":"Creating account...";
+ try{if(mode==="signup"){const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;if(data.session){showMessage("Account ban gaya! Game khol rahe hain...","ok");window.location.href="./index.html"}else showMessage("Signup request successful. Email Inbox/Spam mein confirmation link check karein, confirm karke Login karein.","ok")}
+ else{const {data,error}=await client.auth.signInWithPassword({email,password});if(error)throw error;if(data.session)window.location.href="./index.html"}}
+ catch(error){showMessage("Error: "+(error?.message||"Unknown error"),"err")}finally{submitBtn.disabled=false;submitBtn.textContent=mode==="login"?"Login":"Create Account"}});
 })();
-</script>
-</body>
-</html>
+</script></body></html>
