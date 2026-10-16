@@ -1,17 +1,18 @@
-(function () {
+(() => {
   'use strict';
 
   const $ = id => document.getElementById(id);
+
   const BAL_KEY = 'zyvro_prism_balance_v4';
   const BET_KEY = 'zyvro_prism_bets_v4';
-  const PATTERN_KEY = 'zyvro_prism_pattern_v2';
+  const PATTERN_KEY = 'zyvro_prism_pattern_v4';
 
   let balance = readBalance();
   let stake = 1;
   let selections = [];
   let bets = readArray(BET_KEY);
-  let currentPeriod = null;
   let pattern = readPattern();
+  let currentPeriod = null;
 
   function readBalance() {
     const n = Number(localStorage.getItem(BAL_KEY));
@@ -20,9 +21,9 @@
 
   function readArray(key) {
     try {
-      const v = JSON.parse(localStorage.getItem(key) || '[]');
-      return Array.isArray(v) ? v : [];
-    } catch (_) {
+      const value = JSON.parse(localStorage.getItem(key) || '[]');
+      return Array.isArray(value) ? value : [];
+    } catch {
       return [];
     }
   }
@@ -30,28 +31,30 @@
   function store(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
-    } catch (_) {}
+    } catch (error) {
+      console.error('Storage error:', error);
+    }
   }
 
   function periodInfo() {
     const seconds = Math.floor(Date.now() / 1000);
+
     return {
       period: Math.floor(seconds / 30),
       remaining: 30 - (seconds % 30)
     };
   }
 
-  function colorFor(n) {
-    if (n === 0 || n === 5) return 'Fuchsia';
-    if ([1, 3, 7, 9].includes(n)) return 'Aqua';
+  function colorFor(number) {
+    if (number === 0 || number === 5) return 'Fuchsia';
+    if ([1, 3, 7, 9].includes(number)) return 'Aqua';
     return 'Gold';
   }
 
-  function sizeFor(n) {
-    return n >= 5 ? 'Big' : 'Small';
+  function sizeFor(number) {
+    return number >= 5 ? 'Big' : 'Small';
   }
 
-  // Demo pattern: 10 results, then a new pattern starts.
   function makePattern(startPeriod) {
     let seed =
       (Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0;
@@ -70,23 +73,26 @@
 
   function readPattern() {
     try {
-      const p = JSON.parse(
+      const saved = JSON.parse(
         localStorage.getItem(PATTERN_KEY) || 'null'
       );
 
       if (
-        p &&
-        Array.isArray(p.results) &&
-        p.results.length === 10 &&
-        Number.isFinite(p.startPeriod)
+        saved &&
+        Array.isArray(saved.results) &&
+        saved.results.length === 10 &&
+        Number.isFinite(saved.startPeriod)
       ) {
-        return p;
+        return saved;
       }
-    } catch (_) {}
+    } catch (error) {
+      console.warn('Creating a new demo pattern.');
+    }
 
-    const p = makePattern(periodInfo().period);
-    store(PATTERN_KEY, p);
-    return p;
+    const pattern = makePattern(periodInfo().period);
+    store(PATTERN_KEY, pattern);
+
+    return pattern;
   }
 
   function ensurePattern() {
@@ -103,121 +109,83 @@
     return q;
   }
 
+  function resultFor(period) {
+    const offset = period - pattern.startPeriod;
+
+    if (offset >= 0 && offset < 10) {
+      return pattern.results[offset];
+    }
+
+    let value =
+      (Math.imul(Number(period) >>> 0, 2147483647) || 148271) >>> 0;
+
+    return value % 10;
+  }
+
+  function setStatus(message) {
+    const status = $('status');
+
+    if (status) {
+      status.textContent = message;
+    }
+  }
+
   function saveBalance() {
-    localStorage.setItem(BAL_KEY, String(balance));
+    try {
+      localStorage.setItem(BAL_KEY, String(balance));
+    } catch (error) {
+      console.error('Could not save balance:', error);
+    }
 
     if ($('balance')) {
       $('balance').textContent = String(balance);
     }
   }
 
-  function setStatus(message) {
-    if ($('status')) {
-      $('status').textContent = message;
+  function renderNumbers() {
+    const root = $('numbers');
+
+    if (!root) return;
+
+    root.innerHTML = '';
+
+    for (let n = 0; n < 10; n++) {
+      const button = document.createElement('button');
+
+      button.type = 'button';
+      button.className = 'num ' + colorFor(n).toLowerCase();
+      button.dataset.market = 'number';
+      button.dataset.val = String(n);
+      button.textContent = String(n);
+
+      root.appendChild(button);
     }
   }
 
-  function renderBalls(n) {
-    if (!$('balls')) return;
+  function renderBalls(number) {
+    const root = $('balls');
 
-    let html = '';
+    if (!root) return;
+
+    root.innerHTML = '';
 
     for (let i = 0; i < 5; i++) {
-      const v = (n + i * 3) % 10;
+      const value = (number + i * 3) % 10;
+      const ball = document.createElement('span');
 
-      html +=
-        '<span class="mini ' +
-        colorFor(v) +
-        '">' +
-        v +
-        '</span>';
+      ball.className = 'mini ' + colorFor(value).toLowerCase();
+      ball.textContent = String(value);
+
+      root.appendChild(ball);
     }
-
-    $('balls').innerHTML = html;
-  }
-
-  function renderHistory() {
-    if (!$('history')) return;
-
-    const q = periodInfo();
-    const rows = [];
-
-    for (
-      let p = q.period - 1;
-      p >= Math.max(pattern.startPeriod, q.period - 10);
-      p--
-    ) {
-      if (
-        p >= pattern.startPeriod &&
-        p < pattern.startPeriod + 10
-      ) {
-        const n = pattern.results[p - pattern.startPeriod];
-
-        rows.push({
-          period: p,
-          number: n,
-          color: colorFor(n),
-          size: sizeFor(n)
-        });
-      }
-    }
-
-    if (!rows.length) {
-      $('history').innerHTML =
-        '<div class="emptyledger">' +
-        'First result appears when this round finishes.' +
-        '</div>';
-      return;
-    }
-
-    $('history').innerHTML = rows.slice(0, 10).map(h =>
-      '<div class="historyrow">' +
-      '<span>' + h.period + '</span>' +
-      '<span class="hnum">' + h.number + '</span>' +
-      '<span class="tag">' + h.color + '</span>' +
-      '<span class="tag">' + h.size + '</span>' +
-      '</div>'
-    ).join('');
-  }
-
-  function escapeHtml(value) {
-    return String(value).replace(/[&<>"']/g, c => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }[c]));
-  }
-
-  function renderLedger() {
-    if (!$('ledger')) return;
-
-    if (!bets.length) {
-      $('ledger').innerHTML =
-        '<div class="emptyledger">No bets yet.</div>';
-      return;
-    }
-
-    $('ledger').innerHTML = bets.slice(0, 30).map(b =>
-      '<div class="ledgerrow">' +
-      '<span>' + escapeHtml(b.label) + '</span>' +
-      '<span>' + b.cost + '</span>' +
-      '<span>' +
-      (b.done ? (b.net >= 0 ? 'Settled' : 'Lost') : 'Pending') +
-      '</span>' +
-      '<span>' +
-      (b.done ? ((b.net > 0 ? '+' : '') + b.net) : '—') +
-      '</span>' +
-      '</div>'
-    ).join('');
   }
 
   function renderSelections() {
     document.querySelectorAll('[data-market]').forEach(button => {
-      const selected = selections.some(s =>
-        s.market === button.dataset.market &&
-        s.val === button.dataset.val
+      const selected = selections.some(
+        item =>
+          item.market === button.dataset.market &&
+          item.val === button.dataset.val
       );
 
       button.classList.toggle('sel', selected);
@@ -226,66 +194,126 @@
     setStatus(
       selections.length
         ? selections.length +
-          ' prediction(s) selected · ' +
-          stake +
-          ' coin(s) each.'
+            ' prediction(s) selected · ' +
+            stake * selections.length +
+            ' virtual coin(s) total.'
         : 'Choose a number, color, or Big/Small.'
     );
   }
 
   function pick(button) {
     const market = button.dataset.market;
-    const val = button.dataset.val;
+    const value = button.dataset.val;
 
-    const index = selections.findIndex(s =>
-      s.market === market && s.val === val
+    const index = selections.findIndex(
+      item => item.market === market && item.val === value
     );
 
     if (index >= 0) {
       selections.splice(index, 1);
     } else {
-      selections.push({ market, val });
+      selections.push({ market, val: value });
     }
 
     renderSelections();
   }
 
+  function renderHistory() {
+    const root = $('history');
+
+    if (!root) return;
+
+    const rows = [];
+    const q = periodInfo();
+
+    for (
+      let p = q.period - 1;
+      p >= Math.max(0, q.period - 10);
+      p--
+    ) {
+      const number = resultFor(p);
+
+      rows.push({
+        period: p,
+        number,
+        color: colorFor(number),
+        size: sizeFor(number)
+      });
+    }
+
+    root.innerHTML = rows.length
+      ? rows.map(row => `
+          <div class="historyrow">
+            <span>${row.period}</span>
+            <strong>${row.number}</strong>
+            <span>${row.color}</span>
+            <span>${row.size}</span>
+          </div>
+        `).join('')
+      : '<div class="empty">Results appear after each round finishes.</div>';
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[character]);
+  }
+
+  function renderLedger() {
+    const root = $('ledger');
+
+    if (!root) return;
+
+    if (!bets.length) {
+      root.innerHTML = '<div class="empty">No bets yet.</div>';
+      return;
+    }
+
+    root.innerHTML = bets.slice(0, 30).map(bet => `
+      <div class="ledgerrow">
+        <span>${escapeHTML(bet.label)}</span>
+        <span>${bet.cost}</span>
+        <span>${bet.done ? (bet.net >= 0 ? 'Won' : 'Lost') : 'Pending'}</span>
+        <span class="${bet.done ? (bet.net >= 0 ? 'profit' : 'loss') : ''}">
+          ${bet.done ? (bet.net >= 0 ? '+' : '') + bet.net : '—'}
+        </span>
+      </div>
+    `).join('');
+  }
+
   function settleBets(period) {
-    const index = period - pattern.startPeriod;
-    const n = pattern.results[index];
-
-    if (!Number.isInteger(n)) return;
-
-    const color = colorFor(n);
-    const size = sizeFor(n);
+    const number = resultFor(period);
+    const color = colorFor(number);
+    const size = sizeFor(number);
 
     let changed = false;
-    let netTotal = 0;
 
-    bets.forEach(b => {
-      if (!b.done && Number(b.period) === Number(period)) {
+    bets.forEach(bet => {
+      if (!bet.done && Number(bet.period) === Number(period)) {
         let payout = 0;
 
-        b.items.forEach(item => {
-          const win =
-            (item.market === 'number' &&
-              Number(item.val) === n) ||
-            (item.market === 'color' &&
-              item.val === color) ||
-            (item.market === 'size' &&
-              item.val === size);
+        bet.items.forEach(item => {
+          const won =
+            (item.market === 'number' && Number(item.val) === number) ||
+            (item.market === 'color' && item.val === color) ||
+            (item.market === 'size' && item.val === size);
 
-          if (win) payout += b.stake * 2;
+          if (won) {
+            payout += bet.stake * 2;
+          }
         });
 
-        b.done = true;
-        b.number = n;
-        b.color = color;
-        b.size = size;
-        b.payout = payout;
-        b.net = payout - b.cost;
+        bet.done = true;
+        bet.number = number;
+        bet.color = color;
+        bet.size = size;
+        bet.payout = payout;
+        bet.net = payout - bet.cost;
 
-        netTotal += b.net;
         balance += payout;
         changed = true;
       }
@@ -297,59 +325,16 @@
       renderLedger();
 
       if ($('pl')) {
+        const net = bets
+          .filter(bet => bet.done && Number(bet.period) === Number(period))
+          .reduce((sum, bet) => sum + bet.net, 0);
+
         $('pl').textContent =
-          'Round ' + period +
-          ': ' + n +
-          ' (' + color + ', ' + size + ')' +
-          ' · Net ' +
-          (netTotal >= 0 ? '+' : '') +
-          netTotal + ' coins';
+          'Round ' + period + ': ' +
+          number + ' · ' + color + ' · ' + size +
+          '. Net ' + net + ' coins.';
       }
     }
-  }
-
-  function updateClock() {
-    const q = ensurePattern();
-    const text = String(q.remaining).padStart(2, '0');
-
-    if ($('m1')) $('m1').textContent = '0';
-    if ($('m2')) $('m2').textContent = '0';
-    if ($('s1')) $('s1').textContent = text[0];
-    if ($('s2')) $('s2').textContent = text[1];
-
-    if ($('period')) {
-      $('period').textContent = String(q.period);
-    }
-
-    if (currentPeriod === null) {
-      currentPeriod = q.period;
-    }
-
-    if (q.period !== currentPeriod) {
-      settleBets(currentPeriod);
-      currentPeriod = q.period;
-      selections = [];
-      renderSelections();
-
-      if (q.period >= pattern.startPeriod + 10) {
-        pattern = makePattern(q.period);
-        store(PATTERN_KEY, pattern);
-      }
-
-      renderHistory();
-    }
-
-    if ($('place')) {
-      $('place').disabled = q.remaining <= 5;
-      $('place').textContent =
-        q.remaining <= 5 ? 'Betting closed' : 'Place bet';
-    }
-
-    const index = q.period - pattern.startPeriod;
-    renderBalls(
-      pattern.results[index] ??
-      pattern.results[0]
-    );
   }
 
   function openSheet() {
@@ -361,20 +346,22 @@
     }
 
     if (!selections.length) {
-      setStatus('Please choose a prediction first.');
+      setStatus('Please choose a number, color, or Big/Small first.');
       return;
     }
 
     const cost = stake * selections.length;
 
     if (cost > balance) {
-      setStatus('Not enough virtual coins.');
+      setStatus('Not enough virtual coins. Reduce stake or reset coins.');
       return;
     }
 
-    $('sheetTitle').textContent = selections.map(s =>
-      s.market === 'number' ? 'Number ' + s.val : s.val
-    ).join(', ');
+    $('sheetTitle').textContent = selections
+      .map(item =>
+        item.market === 'number' ? 'Number ' + item.val : item.val
+      )
+      .join(', ');
 
     $('sheetStake').textContent = stake + ' coin(s)';
     $('sheetCount').textContent = String(selections.length);
@@ -399,7 +386,7 @@
       cost > balance
     ) {
       closeSheet();
-      setStatus('Check your selection and balance.');
+      setStatus('Bet could not be placed. Check time, selection, and balance.');
       return;
     }
 
@@ -409,12 +396,9 @@
     bets.unshift({
       id: Date.now(),
       period: q.period,
-      items: selections.map(s => ({
-        market: s.market,
-        val: s.val
-      })),
-      label: selections.map(s =>
-        s.market === 'number' ? '#' + s.val : s.val
+      items: selections.map(item => ({ ...item })),
+      label: selections.map(item =>
+        item.market === 'number' ? '#' + item.val : item.val
       ).join(', '),
       stake,
       cost,
@@ -423,14 +407,65 @@
     });
 
     bets = bets.slice(0, 100);
+
     store(BET_KEY, bets);
     renderLedger();
 
     closeSheet();
+
     selections = [];
     renderSelections();
 
     setStatus('Virtual bet placed for round ' + q.period + '.');
+  }
+
+  function updateClock() {
+    const q = ensurePattern();
+
+    const text = String(q.remaining).padStart(2, '0');
+
+    if ($('m1')) $('m1').textContent = '0';
+    if ($('m2')) $('m2').textContent = '0';
+    if ($('s1')) $('s1').textContent = text[0];
+    if ($('s2')) $('s2').textContent = text[1];
+
+    if ($('period')) {
+      $('period').textContent = String(q.period);
+    }
+
+    if ($('roundStatus')) {
+      $('roundStatus').textContent =
+        q.remaining <= 5
+          ? 'Betting closes in ' + q.remaining + ' second(s).'
+          : 'Practice round is live.';
+    }
+
+    if (currentPeriod === null) {
+      currentPeriod = q.period;
+    }
+
+    if (q.period !== currentPeriod) {
+      settleBets(currentPeriod);
+      currentPeriod = q.period;
+
+      selections = [];
+      renderSelections();
+      renderHistory();
+      renderLedger();
+
+      if (q.period >= pattern.startPeriod + 10) {
+        pattern = makePattern(q.period);
+        store(PATTERN_KEY, pattern);
+      }
+    }
+
+    if ($('place')) {
+      $('place').disabled = q.remaining <= 5;
+      $('place').textContent =
+        q.remaining <= 5 ? 'Betting closed' : 'Place bet';
+    }
+
+    renderBalls(resultFor(q.period));
   }
 
   function refreshGame() {
@@ -445,48 +480,48 @@
     renderLedger();
     updateClock();
 
-    if ($('pl')) {
-      $('pl').textContent =
-        'New 10-round pattern started. Previous bet records are kept.';
-    }
-
-    setStatus('Refresh complete: a new 10-round pattern has started.');
+    setStatus('Refreshed: a new 10-round demo pattern has started.');
   }
 
   function init() {
     const required = [
-      'balance', 'balls', 'm1', 'm2', 's1', 's2',
-      'period', 'numbers', 'history', 'ledger',
-      'status', 'place', 'sheetback', 'sheetTitle',
-      'sheetStake', 'sheetCount', 'sheetTotal',
-      'closeSheet', 'cancelBet', 'confirmBet',
-      'refreshHistory', 'resetCoins', 'randomPick', 'pl'
+      'balance',
+      'm1',
+      'm2',
+      's1',
+      's2',
+      'period',
+      'numbers',
+      'history',
+      'ledger',
+      'status',
+      'place',
+      'sheetback',
+      'sheetTitle',
+      'sheetStake',
+      'sheetCount',
+      'sheetTotal',
+      'closeSheet',
+      'cancelBet',
+      'confirmBet',
+      'refreshHistory',
+      'resetCoins',
+      'randomPick',
+      'pl'
     ];
 
     const missing = required.filter(id => !$(id));
 
     if (missing.length) {
+      console.error('Missing game HTML elements:', missing);
       setStatus('Game setup error: missing ' + missing.join(', '));
-      console.error('Zyvro missing HTML elements:', missing);
       return;
     }
 
-    for (let n = 0; n < 10; n++) {
-      const button = document.createElement('button');
+    renderNumbers();
 
-      button.type = 'button';
-      button.className = 'num';
-      button.dataset.market = 'number';
-      button.dataset.val = String(n);
-      button.textContent = String(n);
-
-      button.addEventListener('click', () => pick(button));
-      $('numbers').appendChild(button);
-    }
-
-    document.querySelectorAll(
-      '.colors [data-market], .sizes [data-market]'
-    ).forEach(button => {
+    // Attach each market button exactly once.
+    document.querySelectorAll('[data-market]').forEach(button => {
       button.addEventListener('click', () => pick(button));
     });
 
@@ -494,8 +529,8 @@
       button.addEventListener('click', () => {
         stake = Number(button.dataset.stake) || 1;
 
-        document.querySelectorAll('[data-stake]').forEach(b => {
-          b.classList.toggle('sel', b === button);
+        document.querySelectorAll('[data-stake]').forEach(item => {
+          item.classList.toggle('active', item === button);
         });
 
         renderSelections();
@@ -516,6 +551,12 @@
     $('cancelBet').addEventListener('click', closeSheet);
     $('confirmBet').addEventListener('click', confirmBet);
 
+    $('sheetback').addEventListener('click', event => {
+      if (event.target === $('sheetback')) {
+        closeSheet();
+      }
+    });
+
     $('refreshHistory').addEventListener('click', refreshGame);
 
     $('resetCoins').addEventListener('click', () => {
@@ -526,13 +567,21 @@
       }
     });
 
+    if ($('howTo')) {
+      $('howTo').addEventListener('click', () => {
+        alert(
+          'Choose a number, color, or Big/Small. Select a virtual stake and tap Place bet. Winning selections return 2× stake. This is a demo using virtual coins only.'
+        );
+      });
+    }
+
     saveBalance();
-    renderLedger();
     renderSelections();
+    renderHistory();
+    renderLedger();
 
     currentPeriod = periodInfo().period;
     updateClock();
-    renderHistory();
 
     setInterval(updateClock, 250);
   }
@@ -545,10 +594,9 @@
     setStatus(
       'Game error: ' +
       String(
-        event.reason &&
-        event.reason.message ||
-        event.reason ||
-        'Async error'
+        event.reason && event.reason.message
+          ? event.reason.message
+          : event.reason || 'Async error'
       )
     );
   });
