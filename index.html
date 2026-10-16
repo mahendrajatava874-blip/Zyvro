@@ -32,7 +32,6 @@ body:not(.auth-ready) .app{display:none}
 .authbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;margin:0 0 10px;border:1px solid #293b5a;border-radius:12px;background:#111a2d;color:#cbd6eb;font-size:12px;overflow-wrap:anywhere}
 .authbar .auth-actions{display:flex;gap:6px;flex-shrink:0}.authbar button{border:1px solid #3a5579;border-radius:8px;padding:7px 10px;background:#1b2b45;color:#c8fff9;font-weight:800}.authbar .profile-btn{background:linear-gradient(120deg,#29e0d0,#248ce5);color:#061c29;border-color:#29e0d0}.authbar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .auth-error{margin:20px auto;max-width:520px;padding:16px;color:#ffd4dc;background:#451e2b;border-radius:12px;font:14px Arial,sans-serif}
-.social-shortcut{margin:0 0 10px;padding:10px 12px;border:1px solid #29e0d0;border-radius:12px;background:linear-gradient(100deg,#153f50,#20254d);text-align:center;font-weight:900}.social-shortcut a{display:block;color:#8ffff6;text-decoration:none;padding:4px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -59,10 +58,9 @@ body:not(.auth-ready) .app{display:none}
        const actions=document.createElement("div");actions.className="auth-actions";
        const profile=document.createElement("button");profile.type="button";profile.className="profile-btn";profile.textContent="👤 Profile";
        profile.addEventListener("click",()=>{window.location.href="./profile_premium_v2.html";});
-       const social=document.createElement("button");social.type="button";social.textContent="👥 Social";social.addEventListener("click",()=>{window.location.href="./social.html";});
        const out=document.createElement("button");out.type="button";out.textContent="Log out";
        out.addEventListener("click",async()=>{out.disabled=true;out.textContent="Logging out…";const {error}=await client.auth.signOut();if(error){out.disabled=false;out.textContent="Log out";alert("Logout failed: "+error.message);return;}window.location.replace("./auth.html");});
-       actions.append(profile,social,out);bar.append(email,actions);header.insertAdjacentElement("afterend",bar);
+       actions.append(profile,out);bar.append(email,actions);header.insertAdjacentElement("afterend",bar);
      }
    };
    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",revealGame,{once:true}); else revealGame();
@@ -72,205 +70,15 @@ body:not(.auth-ready) .app{display:none}
 </head><body>
 <main class="app">
 <header class="top"><div class="logo">ZYVR<i>O•</i></div><div class="wallet">🪙 <span id="balance">1000</span> coins</div></header>
-<div class="social-shortcut"><a href="./social.html">👥 Social · Friends · Chat</a></div>
-<div class="demo">VIRTUAL MODE · Practice coins only. No real-money betting or cash prizes.</div>
-<button class="wallet-reset" id="resetCoins">↻ Reset virtual coins to 1000</button>
-<section class="banner">
- <div><div class="how">▣ How to play</div><div class="game-name">PRISM • 30 SEC</div><div class="balls" id="balls"></div></div>
- <div><div class="timerlabel">Time remaining</div><div class="clock"><span class="digit" id="m1">0</span><span class="digit" id="m2">0</span><span class="digit">:</span><span class="digit" id="s1">3</span><span class="digit" id="s2">0</span></div><div class="period" id="period">Loading round…</div></div>
-</section>
-<section class="panel">
- <div class="colors">
-  <button class="btn green" data-market="color" data-val="Aqua">AQUA</button>
-  <button class="btn violet" data-market="color" data-val="Fuchsia">FUCHSIA</button>
-  <button class="btn red" data-market="color" data-val="Gold">GOLD</button>
- </div>
- <div class="numbers" id="numbers"></div>
- <div class="stake-row">
-  <button class="stake random" id="randomPick">Random</button>
-  <button class="stake sel" data-stake="1">X1</button><button class="stake" data-stake="5">X5</button>
-  <button class="stake" data-stake="10">X10</button><button class="stake" data-stake="20">X20</button>
-  <button class="stake" data-stake="50">X50</button><button class="stake" data-stake="100">X100</button>
- </div>
- <div class="sizes"><button class="big" data-market="size" data-val="Big">Big</button><button class="small" data-market="size" data-val="Small">Small</button></div>
- <div class="hint">Choose one or more predictions. X1–X100 is the virtual stake for each selected option.</div>
- <button class="place" id="place">Place bet</button><div class="status" id="status">Choose a number, color, or Big/Small.</div>
-</section>
+<div class="demo">VIRTUAL MODE · Practice coins only. No real-money betting or cash prizes.</div><button class="wallet-reset" onclick="resetDemoCoins()">↻ Reset virtual coins to 1000</button>
+<section class="banner"><div><div class="how">▣ How to play</div><div class="game-name">PRISM • 30 SEC</div><div class="balls" id="balls"><span class="mini">8</span><span class="mini">3</span><span class="mini Green">1</span><span class="mini">6</span><span class="mini Violet">0</span></div></div><div><div class="timerlabel">Time remaining</div><div class="clock"><span class="digit" id="m1">0</span><span class="digit" id="m2">0</span><span class="digit">:</span><span class="digit" id="s1">3</span><span class="digit" id="s2">0</span></div><div class="period" id="period">2026101300001001</div></div></section>
+<section class="panel"><div class="colors"><button class="btn green" data-market="color" data-val="Aqua" onclick="pick(this)">AQUA</button><button class="btn violet" data-market="color" data-val="Fuchsia" onclick="pick(this)">FUCHSIA</button><button class="btn red" data-market="color" data-val="Gold" onclick="pick(this)">GOLD</button></div>
+<div class="numbers" id="numbers"></div>
+<div class="stake-row"><button class="stake random" onclick="randomPick()">Random</button><button class="stake sel" data-stake="1" onclick="setStake(this)">X1</button><button class="stake" data-stake="5" onclick="setStake(this)">X5</button><button class="stake" data-stake="10" onclick="setStake(this)">X10</button><button class="stake" data-stake="20" onclick="setStake(this)">X20</button><button class="stake" data-stake="50" onclick="setStake(this)">X50</button><button class="stake" data-stake="100" onclick="setStake(this)">X100</button></div>
+<div class="sizes"><button class="big" data-market="size" data-val="Big" onclick="pick(this)">Big</button><button class="small" data-market="size" data-val="Small" onclick="pick(this)">Small</button></div>
+<div class="hint">Choose one or more predictions in this round. X1–X100 is the virtual stake for each selected option.</div>
+<button class="place" id="place" onclick="openSheet()">Place bet</button><div class="status" id="status">Select number, color or Big/Small, then place a demo bet.</div></section>
 <section class="panel"><div class="label">Last round · Profit / Loss</div><div class="pl" id="pl" style="color:#758096">No round settled yet.</div></section>
-<section class="panel">
- <div class="historytools"><div class="label" style="margin:0">Round results</div><button class="refreshbtn" id="refreshHistory">⟳ Refresh game</button></div>
- <div class="subheading">Recent outcomes · latest first</div>
- <div class="tablehead"><span>Round</span><span>Result</span><span>Color</span><span>Size</span></div>
- <div id="history"></div>
-</section>
-<section class="panel"><div class="label">My bet history</div><div class="ledgerhead"><span>Selection</span><span>Stake</span><span>Result</span><span>Net</span></div><div id="ledger"><div class="emptyledger">No bets yet.</div></div></section>
-<div class="foot">ZYVRO · Virtual practice game only · No real-money betting or cash prizes.</div>
-
-<div class="sheetback" id="sheetback" role="dialog" aria-modal="true" aria-label="Confirm virtual bet">
-  <div class="sheet">
-    <div class="sheethead"><span>Confirm your prediction</span><button class="x" id="closeSheet" type="button" aria-label="Close">×</button></div>
-    <div class="sheettitle" id="sheetTitle">No selection</div>
-    <div class="sheetrow"><span>Stake per selection</span><strong id="sheetStake">1 coin</strong></div>
-    <div class="sheetrow"><span>Selected predictions</span><strong id="sheetCount">0</strong></div>
-    <div class="sheetrow"><span>Total cost</span><strong id="sheetTotal">0 coins</strong></div>
-    <p class="agree">Virtual practice coins only. No deposits, withdrawals, or cash prizes.</p>
-    <div class="sheetfoot"><button class="cancel" id="cancelBet" type="button">Cancel</button><button class="confirm" id="confirmBet" type="button">Confirm bet</button></div>
-  </div>
-</div>
-
-<script>
-(function(){
-  'use strict';
-  const $ = id => document.getElementById(id);
-  const BAL_KEY='zyvro_prism_balance_v4', BET_KEY='zyvro_prism_bets_v4';
-  const PATTERN_KEY='zyvro_prism_pattern_v1';
-  let balance=readBalance(), stake=1, selections=[], myBets=readArray(BET_KEY), pattern=readPattern();
-  let currentPeriod=null, secondsLeft=30, lastSettled=null;
-
-  function readBalance(){const n=Number(localStorage.getItem(BAL_KEY));return Number.isFinite(n)&&n>=0?n:1000}
-  function readArray(k){try{const v=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(v)?v:[]}catch(e){return []}}
-  function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-  function saveBalance(){localStorage.setItem(BAL_KEY,String(balance));$('balance').textContent=String(balance)}
-  function periodInfo(){const now=Math.floor(Date.now()/1000);return {p:Math.floor(now/30),remain:30-(now%30)}}
-  function colorFor(n){return n===0||n===5?'Fuchsia':([1,3,7,9].includes(n)?'Aqua':'Gold')}
-  function sizeFor(n){return n>=5?'Big':'Small'}
-  function newPattern(){
-    // A short 10-round demo pattern. It is virtual-only and not a prediction of real outcomes.
-    const seed=(Date.now() ^ Math.floor(Math.random()*0x7fffffff))>>>0;
-    let x=seed||123456789, results=[];
-    for(let i=0;i<10;i++){x=(Math.imul(x,1664525)+1013904223)>>>0;results.push(x%10)}
-    return {seed, startPeriod:periodInfo().p, results};
-  }
-  function readPattern(){
-    try{
-      const p=JSON.parse(localStorage.getItem(PATTERN_KEY)||'null');
-      if(p && Array.isArray(p.results) && p.results.length===10 && Number.isFinite(p.startPeriod)) return p;
-    }catch(e){}
-    const p=newPattern();write(PATTERN_KEY,p);return p;
-  }
-  function ensurePattern(){
-    const q=periodInfo();
-    if(q.p < pattern.startPeriod || q.p >= pattern.startPeriod+10){
-      pattern=newPattern();pattern.startPeriod=q.p;write(PATTERN_KEY,pattern);
-    }
-    return q;
-  }
-  function resultFor(period){
-    const offset=period-pattern.startPeriod;
-    if(offset>=0 && offset<10) return pattern.results[offset];
-    // If opening mid-cycle, still show a stable deterministic result for the displayed round.
-    let x=(Math.imul((Number(period)%2147483647)||1,48271)>>>0);
-    return x%10;
-  }
-  function renderBalls(n){
-    const values=[];
-    for(let i=0;i<5;i++){const v=(n+i*3)%10;values.push('<span class="mini '+colorFor(v)+'">'+v+'</span>')}
-    $('balls').innerHTML=values.join('');
-  }
-  function renderHistory(){
-    const completed=[];
-    const q=periodInfo();
-    for(let p=q.p-1;p>=Math.max(pattern.startPeriod,q.p-10);p--){
-      if(p>=pattern.startPeriod && p<pattern.startPeriod+10){
-        const n=resultFor(p);completed.push({period:p,number:n,color:colorFor(n),size:sizeFor(n)});
-      }
-    }
-    if(!completed.length){$('history').innerHTML='<div class="emptyledger">Round pattern is starting. Results appear as rounds finish.</div>';return}
-    $('history').innerHTML=completed.slice(0,10).map(h=>'<div class="historyrow"><span>'+h.period+'</span><span class="hnum">'+h.number+'</span><span class="tag">'+h.color+'</span><span class="tag">'+h.size+'</span></div>').join('');
-  }
-  function renderLedger(){
-    if(!myBets.length){$('ledger').innerHTML='<div class="emptyledger">No bets yet.</div>';return}
-    $('ledger').innerHTML=myBets.slice(0,30).map(b=>'<div class="ledgerrow"><span>'+escapeHtml(b.label)+'</span><span>'+b.cost+'</span><span>'+(b.done?(b.net>=0?'Settled':'Lost'):'Pending')+'</span><span class="'+(b.done?(b.net>=0?'profit':'loss'):'')+'">'+(b.done?(b.net>0?'+':'')+b.net:'—')+'</span></div>').join('');
-  }
-  function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-  function renderSelections(){
-    document.querySelectorAll('[data-market]').forEach(b=>{
-      const chosen=selections.some(s=>s.market===b.dataset.market && s.val===b.dataset.val);
-      b.classList.toggle('sel',chosen);
-    });
-    $('status').textContent=selections.length?selections.length+' prediction(s) selected · '+stake+' coin(s) each.':'Choose a number, color, or Big/Small.';
-  }
-  function pick(btn){
-    const market=btn.dataset.market,val=btn.dataset.val;
-    const i=selections.findIndex(s=>s.market===market&&s.val===val);
-    if(i>=0) selections.splice(i,1); else selections.push({market,val});
-    renderSelections();
-  }
-  function updateClock(){
-    const q=ensurePattern(); secondsLeft=q.remain;
-    const mm=String(Math.floor(q.remain/60)).padStart(2,'0'),ss=String(q.remain%60).padStart(2,'0');
-    $('m1').textContent=mm[0];$('m2').textContent=mm[1];$('s1').textContent=ss[0];$('s2').textContent=ss[1];
-    $('period').textContent='Round '+q.p+' · Pattern '+(Math.min(10,Math.max(1,q.p-pattern.startPeriod+1)))+'/10';
-    if(currentPeriod===null) currentPeriod=q.p;
-    if(q.p!==currentPeriod){
-      settleBets(currentPeriod);currentPeriod=q.p;selections=[];renderSelections();renderHistory();
-      if(q.p>=pattern.startPeriod+10){pattern=newPattern();pattern.startPeriod=q.p;write(PATTERN_KEY,pattern)}
-    }
-    $('place').disabled=q.remain<=5;
-    $('place').textContent=q.remain<=5?'Betting closed':'Place bet';
-    renderBalls(resultFor(Math.max(pattern.startPeriod,q.p-1)));
-  }
-  function settleBets(period){
-    const n=resultFor(period),color=colorFor(n),size=sizeFor(n);let changed=false,net=0;
-    myBets.forEach(b=>{
-      if(!b.done && Number(b.period)===Number(period)){
-        let payout=0;
-        b.items.forEach(it=>{
-          const win=(it.market==='number'&&Number(it.val)===n)||(it.market==='color'&&it.val===color)||(it.market==='size'&&it.val===size);
-          if(win)payout+=b.stake*2;
-        });
-        b.done=true;b.number=n;b.color=color;b.size=size;b.payout=payout;b.net=payout-b.cost;net+=b.net;balance+=payout;changed=true;
-      }
-    });
-    if(changed){saveBalance();write(BET_KEY,myBets);renderLedger();$('pl').textContent='Round '+period+': '+n+' ('+color+', '+size+') · Net '+(net>=0?'+':'')+net+' coins';}
-    lastSettled=period;
-  }
-  function openSheet(){
-    const q=periodInfo();
-    if(q.remain<=5){$('status').textContent='Betting closes during the last 5 seconds.';return}
-    if(!selections.length){$('status').textContent='Please choose a number, color, or Big/Small first.';return}
-    const cost=stake*selections.length;
-    if(cost>balance){$('status').textContent='Not enough virtual coins. Reduce stake or reset coins.';return}
-    $('sheetTitle').textContent=selections.map(s=>s.market==='number'?'Number '+s.val:s.val).join(', ');
-    $('sheetStake').textContent=stake+' coin(s)';$('sheetCount').textContent=String(selections.length);$('sheetTotal').textContent=cost+' coins';$('sheetback').classList.add('show');
-  }
-  function closeSheet(){$('sheetback').classList.remove('show')}
-  function confirmBet(){
-    const q=periodInfo(),cost=stake*selections.length;
-    if(q.remain<=5||!selections.length||cost>balance){closeSheet();$('status').textContent='Bet could not be placed. Check time, selection, and balance.';return}
-    balance-=cost;saveBalance();
-    myBets.unshift({id:Date.now(),period:q.p,items:selections.map(s=>({market:s.market,val:s.val})),label:selections.map(s=>s.market==='number'?'#'+s.val:s.val).join(', '),stake,cost,done:false,net:0});
-    myBets=myBets.slice(0,100);write(BET_KEY,myBets);renderLedger();closeSheet();selections=[];renderSelections();$('status').textContent='Virtual bet placed for round '+q.p+'.';
-  }
-  function resetCoins(){if(confirm('Reset demo balance to 1000 virtual coins?')){balance=1000;saveBalance();$('status').textContent='Virtual coins reset to 1000.'}}
-  function refreshGame(){
-    // User-requested refresh: begin a fresh short 10-round pattern and clear only the visible outcome history.
-    pattern=newPattern();pattern.startPeriod=periodInfo().p;write(PATTERN_KEY,pattern);
-    historyMessage();
-    currentPeriod=periodInfo().p;selections=[];renderSelections();renderHistory();renderLedger();updateClock();
-    $('status').textContent='Refreshed: a new 10-round pattern has started.';
-  }
-  function historyMessage(){ $('pl').textContent='New 10-round pattern started. Previous bet records are kept below.'; }
-  function init(){
-    const required=['balance','balls','m1','m2','s1','s2','period','numbers','history','ledger','status','place','sheetback','sheetTitle','sheetStake','sheetCount','sheetTotal','closeSheet','cancelBet','confirmBet','refreshHistory','resetCoins','randomPick','pl'];
-    const missing=required.filter(id=>!$(id));
-    if(missing.length){throw new Error('Missing game HTML elements: '+missing.join(', '))}
-    for(let n=0;n<10;n++){
-      const b=document.createElement('button');b.type='button';b.className='num '+(colorFor(n)==='Aqua'?'g':colorFor(n)==='Fuchsia'?'v':'');b.dataset.market='number';b.dataset.val=String(n);b.textContent=String(n);b.addEventListener('click',()=>pick(b));$('numbers').appendChild(b);
-    }
-    document.querySelectorAll('.colors [data-market],.sizes [data-market]').forEach(b=>b.addEventListener('click',()=>pick(b)));
-    document.querySelectorAll('[data-stake]').forEach(b=>b.addEventListener('click',e=>{stake=Number(e.currentTarget.dataset.stake)||1;document.querySelectorAll('[data-stake]').forEach(x=>x.classList.toggle('sel',x===e.currentTarget));renderSelections()}));
-    $('randomPick').addEventListener('click',()=>{selections=[{market:'number',val:String(Math.floor(Math.random()*10))}];renderSelections()});
-    $('place').addEventListener('click',openSheet);$('closeSheet').addEventListener('click',closeSheet);$('cancelBet').addEventListener('click',closeSheet);$('confirmBet').addEventListener('click',confirmBet);
-    $('resetCoins').addEventListener('click',resetCoins);$('refreshHistory').addEventListener('click',refreshGame);
-    saveBalance();renderLedger();currentPeriod=periodInfo().p;updateClock();renderHistory();renderSelections();setInterval(updateClock,250);
-  }
-  window.addEventListener('error',e=>{const status=$('status');if(status)status.textContent='Game error: '+(e.message||'JavaScript error')});
-  window.addEventListener('unhandledrejection',e=>{const status=$('status');if(status)status.textContent='Game error: '+String(e.reason&&e.reason.message||e.reason||'Async error')});
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{try{init()}catch(e){console.error(e);if($('status'))$('status').textContent='Game failed to start: '+e.message}}, {once:true});
-  else {try{init()}catch(e){console.error(e);if($('status'))$('status').textContent='Game failed to start: '+e.message}}
-})();
-</script>
-</main>
-</body>
-</html>
+<section class="panel"><div class="historytools"><div class="label" style="margin:0">Round results</div><button class="refreshbtn" onclick="refreshHistory()">⟳ Update history</button></div><div class="subheading">Recent outcomes · latest first</div><div class="tablehead"><span>Period</span><span>Number</span><span>Big / Small</span><span>Color</span></div><div id="history"></div></section>
+<section class="panel"><div class="label">My bet history</div><div class="subheading">Every bet, stake, result and net profit/loss saved on this browser.</div><div class="ledgerhead"><span>Round / Pick</span><span>Stake</span><span>Result</span><span>Net P/L</span></div><div id="betledger"><div class="emptyledger">Your bet records will appear here after the first round.</div></div></section>
+<div class="foot">ZYVRO PRISM A
