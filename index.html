@@ -53,4 +53,125 @@ function logout(){try{localStorage.removeItem('supabase.auth.token');Object.keys
 function init(){renderNumbers();document.querySelectorAll('[data-market]').forEach(b=>b.addEventListener('click',()=>toggleSelection(b)));document.querySelectorAll('[data-stake]').forEach(b=>b.addEventListener('click',()=>{stake=Number(b.dataset.stake)||1;document.querySelectorAll('[data-stake]').forEach(x=>x.classList.toggle('selected',x===b));renderSelections()}));$('randomPick').addEventListener('click',()=>{const n=Math.floor(Math.random()*10);selections=[{market:'number',val:String(n)}];renderSelections()});$('place').addEventListener('click',openSheet);$('closeSheet').addEventListener('click',closeSheet);$('cancelBet').addEventListener('click',closeSheet);$('confirmBet').addEventListener('click',confirmBet);$('sheetback').addEventListener('click',e=>{if(e.target===$('sheetback'))closeSheet()});$('refreshHistory').addEventListener('click',refreshGame);$('claimCoins').addEventListener('click',claimCoins);$('resetCoins').addEventListener('click',resetCoins);$('clearBets').addEventListener('click',clearBets);$('howTo').addEventListener('click',howTo);$('logoutBtn').addEventListener('click',logout);saveBalance();renderSelections();renderLedger();renderHistory();lastPeriod=clockInfo().period;updateClock();setInterval(updateClock,250)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
-</script></body></html>
+/* Zyvro Profit/Loss Result Popup */
+.result-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,.78);
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.result-backdrop.show {
+  display: flex;
+}
+
+.result-card {
+  width: 100%;
+  max-width: 390px;
+  overflow: hidden;
+  border-radius: 24px;
+  text-align: center;
+  background: linear-gradient(160deg,#ffb15a,#ff654f 65%,#ed394b);
+  color: white;
+  box-shadow: 0 20px 70px #0009;
+  animation: resultPop .3s ease-out;
+}
+
+.result-card.loss {
+  background: linear-gradient(160deg,#64748b,#334155 65%,#172033);
+}
+
+@keyframes resultPop {
+  from {
+    transform: scale(.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.result-icon {
+  width: 100px;
+  height: 100px;
+  margin: 20px auto 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 52px;
+  background: linear-gradient(145deg,#ffe6a0,#ffab20);
+  border: 6px solid #fff6;
+  box-shadow: 0 5px 18px #8b2b2555;
+}
+
+.result-title {
+  font-size: 30px;
+  font-weight: 950;
+  margin: 12px 8px;
+}
+
+.result-label {
+  font-size: 14px;
+  opacity: .9;
+}
+
+.result-outcome {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px;
+}
+
+.result-chip {
+  padding: 7px 13px;
+  border-radius: 10px;
+  background: #ffffff2b;
+  border: 1px solid #ffffff65;
+  font-weight: 850;
+}
+
+.result-prize {
+  background: #fff;
+  color: #e94f53;
+  margin: 20px 15px;
+  padding: 18px 8px;
+  border-radius: 16px;
+}
+
+.result-prize strong {
+  display: block;
+  font-size: 32px;
+  overflow-wrap: anywhere;
+}
+
+.result-prize.loss-prize {
+  color: #334155;
+}
+
+.result-period {
+  font-size: 12px;
+  color: #fff;
+  overflow-wrap: anywhere;
+  padding: 0 12px;
+}
+
+.result-countdown {
+  margin: 20px 0 8px;
+  font-size: 13px;
+}
+
+.result-close {
+  margin: 10px 0 22px;
+  border: 1px solid #ffffff88;
+  background: #ffffff22;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 12px;
+  font-weight: 850;
+  }</script></body></html>
