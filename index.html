@@ -4,7 +4,25 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Zyvro • Prism Play</title>
 <style>
-:root{color-scheme:dark;--bg:#080d18;--panel:#111c2e;--line:#2d405b;--ink:#f3f7ff;--muted:#9eafc8;--cyan:#40e0d0;--pink:#ed62c5;--amber:#ffc45c;--grad:linear-gradient(110deg,#39dfd0,#369fe9 55%,#df55c4)}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#1b3150 0,transparent 42%),var(--bg);font:16px/1.45 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink)}button,a{font:inherit}button{cursor:pointer;touch-action:manipulation}.wrap{max-width:850px;margin:auto;padding:16px 14px 42px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.logo{font-weight:950;font-size:25px;letter-spacing:1px}.logo b{color:var(--cyan)}.wallet{border:1px solid var(--line);background:#17243a;border-radius:15px;padding:9px 12px;font-weight:850;white-space:nowrap}.nav{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.nav a,.nav button{display:inline-block;text-decoration:none;color:var(--ink);background:#17243a;border:1px solid #405675;border-radius:12px;padding:8px 12px;font-weight:750;font-size:14px}.card{background:linear-gradient(145deg,#14223a,#101827);border:1px solid var(--line);border-radius:25px;padding:18px;margin:14px 0;box-shadow:0 12px 28px #0003}.hero{background:linear-gradient(115deg,#12394b,#20254b 58%,#402146);border-color:#456b83}.tag{display:inline-flex;padding:6px 11px;border:1px solid #5b879d;border-radius:30px;font-weight:800;font-size:12px;letter-spacing:1px;color:#c7ffff}.hero h1{font-size:21px;margin:16px 0}.muted,.hint{color:var(--muted)}.label{font-weight:750;margin:8px 0;color:#c5d1e5}.clock{display:flex;align-items:center;gap:7px;margin:10px 0}.digit{flex:1;min-width:0;text-align:center;background:#081121;border:2px solid #344b6b;border-radius:14px;padding:8px 0;font-size:clamp(28px,7vw,42px);font-weight:950;box-shadow:inset 0 4px 12px #0006}.colon{font-size:27px;font-weight:900}.period{font-weight:850;overflow-wrap:anywhere}.roundnote{min-height:23px;color:#b7c9e3;margin-top:5px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.btn{border:1px solid #3a506f;background:#1a2a43;color:var(--ink);border-radius:15px;padding:13px 7px;font-weight:850;box-shadow:0 3px 0 #080e19;min-width:0}.btn:active{transform:translateY(1px)}.aqua{background:linear-gradient(135deg,#53eddf,#17b7ba);color:#082c35}.fuchsia{background:linear-gradient(135deg,#f681d5,#d32da0);color:#35112d}.gold{background:linear-gradient(135deg,#ffdc8b,#f3a222);color:#3a2709}.selected{outline:3px solid #fff;box-shadow:0 0 0 5px #4ee8e044}.numbers{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:16px 0}.num{aspect-ratio:1;border-radius:50%;font-size:24px;padding:0}.stakegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:15px 0}.stakegrid .wide{grid-column:1/-1}.sizes{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:15px 0}.sizes .btn{font-size:23px;padding:17px 6px}.primary{width:100%;border:0;border-radius:16px;background:var(--grad);color:white;padding:16px;font-size:21px;font-weight:950;box-shadow:0 6px 18px #258bd533}.status{min-height:25px;margin-top:12px;color:#c5d3e9;overflow-wrap:anywhere}.heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.heading h2,.card h2{font-size:21px;margin:0 0 12px}.heading .btn{font-size:14px}.tablehead,.historyrow{display:grid;grid-template-columns:1.2fr .65fr 1fr .75fr;gap:7px;align-items:center;padding:11px 10px;border-radius:12px;margin-top:7px;overflow-wrap:anywhere}.tablehead{background:var(--grad);color:white;font-weight:900}.historyrow{background:#1a263b}.ledgerhead,.ledgerrow{display:grid;grid-template-columns:1.3fr .7fr 1fr;gap:8px;padding:11px 10px;border-radius:12px;margin-top:7px;overflow-wrap:anywhere}.ledgerhead{background:#24344e;color:#d9e7ff;font-weight:850}.ledgerrow{background:#1a263b}.empty{color:var(--muted);padding:14px 0}.good{color:#69e8bb}.bad{color:#ff9caa}.modalback{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:flex-end;justify-content:center;padding:12px}.modalback.show{display:flex}.modal{width:min(650px,100%);background:#111c2e;border:1px solid #526887;border-radius:27px;padding:22px 18px;box-shadow:0 20px 60px #0009}.modal h2{margin:8px 0 16px}.close{float:right;background:transparent;color:white;border:1px solid #526887;border-radius:12px;padding:5px 13px;font-size:24px}.tot{display:flex;justify-content:space-between;gap:12px;margin:14px 0}.modalactions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.modalactions .primary{font-size:16px}.smallprint{font-size:12px;color:var(--muted);margin-top:18px}@media(min-width:650px){.wrap{padding:24px}.card{padding:24px}.numbers{grid-template-columns:repeat(10,minmax(0,1fr))}.num{font-size:21px}.modalback{align-items:center}}
+:root{color-scheme:dark;--bg:#080d18;--panel:#111c2e;--line:#2d405b;--ink:#f3f7ff;--muted:#9eafc8;--cyan:#40e0d0;--pink:#ed62c5;--amber:#ffc45c;--grad:linear-gradient(110deg,#39dfd0,#369fe9 55%,#df55c4)}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#1b3150 0,transparent 42%),var(--bg);font:16px/1.45 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink)}button,a{font:inherit}button{cursor:pointer;touch-action:manipulation}.wrap{max-width:850px;margin:auto;padding:16px 14px 42px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.logo{font-weight:950;font-size:25px;letter-spacing:1px}.logo b{color:var(--cyan)}.wallet{border:1px solid var(--line);background:#17243a;border-radius:15px;padding:9px 12px;font-weight:850;white-space:nowrap}.nav{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.nav a,.nav button{display:inline-block;text-decoration:none;color:var(--ink);background:#17243a;border:1px solid #405675;border-radius:12px;padding:8px 12px;font-weight:750;font-size:14px}.card{background:linear-gradient(145deg,#14223a,#101827);border:1px solid var(--line);border-radius:25px;padding:18px;margin:14px 0;box-shadow:0 12px 28px #0003}.hero{background:linear-gradient(115deg,#12394b,#20254b 58%,#402146);border-color:#456b83}.tag{display:inline-flex;padding:6px 11px;border:1px solid #5b879d;border-radius:30px;font-weight:800;font-size:12px;letter-spacing:1px;color:#c7ffff}.hero h1{font-size:21px;margin:16px 0}.muted,.hint{color:var(--muted)}.label{font-weight:750;margin:8px 0;color:#c5d1e5}.clock{display:flex;align-items:center;gap:7px;margin:10px 0}.digit{flex:1;min-width:0;text-align:center;background:#081121;border:2px solid #344b6b;border-radius:14px;padding:8px 0;font-size:clamp(28px,7vw,42px);font-weight:950;box-shadow:inset 0 4px 12px #0006}.colon{font-size:27px;font-weight:900}.period{font-weight:850;overflow-wrap:anywhere}.roundnote{min-height:23px;color:#b7c9e3;margin-top:5px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.btn{border:1px solid #3a506f;background:#1a2a43;color:var(--ink);border-radius:15px;padding:13px 7px;font-weight:850;box-shadow:0 3px 0 #080e19;min-width:0}.btn:active{transform:translateY(1px)}.aqua{background:linear-gradient(135deg,#53eddf,#17b7ba);color:#082c35}.fuchsia{background:linear-gradient(135deg,#f681d5,#d32da0);color:#35112d}.gold{background:linear-gradient(135deg,#ffdc8b,#f3a222);color:#3a2709}.selected{outline:3px solid #fff;box-shadow:0 0 0 5px #4ee8e044}.numbers{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:16px 0}.num{aspect-ratio:1;border-radius:50%;font-size:24px;padding:0}.stakegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:15px 0}.stakegrid .wide{grid-column:1/-1}.sizes{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:15px 0}.sizes .btn{font-size:23px;padding:17px 6px}.primary{width:100%;border:0;border-radius:16px;background:var(--grad);color:white;padding:16px;font-size:21px;font-weight:950;box-shadow:0 6px 18px #258bd533}.status{min-height:25px;margin-top:12px;color:#c5d3e9;overflow-wrap:anywhere}.heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.heading h2,.card h2{font-size:21px;margin:0 0 12px}.heading .btn{font-size:14px}.tablehead,.historyrow{display:grid;grid-template-columns:1.2fr .65fr 1fr .75fr;gap:7px;align-items:center;padding:11px 10px;border-radius:12px;margin-top:7px;overflow-wrap:anywhere}.tablehead{background:var(--grad);color:white;font-weight:900}.historyrow{background:#1a263b}.ledgerhead,.ledgerrow{display:grid;grid-template-columns:1.3fr .7fr 1fr;gap:8px;padding:11px 10px;border-radius:12px;margin-top:7px;overflow-wrap:anywhere}.ledgerhead{background:#24344e;color:#d9e7ff;font-weight:850}.ledgerrow{background:#1a263b}.empty{color:var(--muted);padding:14px 0}.good{color:#69e8bb}.bad{color:#ff9caa}.modalback{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:flex-end;justify-content:center;padding:12px}.modalback.show{display:flex}.modal{width:min(650px,100%);background:#111c2e;border:1px solid #526887;border-radius:27px;padding:22px 18px;box-shadow:0 20px 60px #0009}.modal h2{margin:8px 0 16px}.close{float:right;background:transparent;color:white;border:1px solid #526887;border-radius:12px;padding:5px 13px;font-size:24px}.tot{display:flex;justify-content:space-between;gap:12px;margin:14px 0}.modalactions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.modalactions .primary{font-size:16px}.smallprint{font-size:12px;color:var(--muted);margin-top:18px}
+@media(min-width:650px){.wrap{padding:24px}.card{padding:24px}.numbers{grid-template-columns:repeat(10,minmax(0,1fr))}.num{font-size:21px}.modalback{align-items:center}}
+/* Profit/Loss popup */
+.result-backdrop{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:16px}
+.result-backdrop.show{display:flex}
+.result-card{width:100%;max-width:390px;max-height:92vh;overflow:auto;border-radius:24px;text-align:center;background:linear-gradient(160deg,#ffb15a,#ff654f 65%,#ed394b);color:white;box-shadow:0 20px 70px #0009;animation:resultPop .3s ease-out}
+.result-card.loss{background:linear-gradient(160deg,#64748b,#334155 65%,#172033)}
+@keyframes resultPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.result-icon{width:94px;height:94px;margin:18px auto 0;border-radius:50%;display:grid;place-items:center;font-size:48px;background:linear-gradient(145deg,#ffe6a0,#ffab20);border:6px solid #fff6;box-shadow:0 5px 18px #8b2b2555}
+.result-title{font-size:clamp(23px,6vw,30px);font-weight:950;margin:12px 8px}
+.result-label{font-size:13px;opacity:.9}
+.result-outcome{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:14px}
+.result-chip{padding:7px 13px;border-radius:10px;background:#ffffff2b;border:1px solid #ffffff65;font-weight:850}
+.result-prize{background:#fff;color:#e94f53;margin:20px 15px;padding:18px 8px;border-radius:16px}
+.result-prize strong{display:block;font-size:clamp(22px,6vw,32px);overflow-wrap:anywhere}
+.result-prize.loss-prize{color:#334155}
+.result-period{font-size:12px;color:#fff;overflow-wrap:anywhere;padding:0 12px}
+.result-countdown{margin:18px 0 8px;font-size:13px}
+.result-close{margin:8px 0 20px;border:1px solid #ffffff88;background:#ffffff22;color:white;padding:10px 25px;border-radius:12px;font-weight:850}
 </style></head>
 <body><main class="wrap">
 <header class="top"><div class="logo">ZYVRO <b>PRISM</b></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end"><div class="wallet">🪙 <span id="balance">1000</span> coins</div><button class="btn" id="claimCoins" type="button" style="padding:9px 11px">🎁 Free coins</button></div></header>
@@ -16,6 +34,26 @@
 <section class="card"><h2>My bet history</h2><div class="ledgerhead"><span>Selection</span><span>Stake</span><span>Result</span></div><div id="ledger"><div class="empty">No bets yet.</div></div><div class="grid3" style="margin-top:14px"><button class="btn" id="resetCoins" type="button">Reset coins</button><button class="btn" id="clearBets" type="button">Clear bet history</button><button class="btn" id="howTo" type="button">How to play</button></div><p class="smallprint">Virtual practice coins only. No deposits, withdrawals, or cash prizes. This is a local demo game; it is not connected to a shared server round.</p></section>
 </main>
 <div class="modalback" id="sheetback" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="modal"><button class="close" id="closeSheet" type="button" aria-label="Close">×</button><div class="hint">CONFIRM YOUR PREDICTION</div><h2 id="sheetTitle">No selection</h2><div class="tot"><span>Stake per selection</span><strong id="sheetStake">1 coin</strong></div><div class="tot"><span>Selected predictions</span><strong id="sheetCount">0</strong></div><div class="tot"><span>Total cost</span><strong id="sheetTotal">0 coins</strong></div><p class="hint">Virtual practice coins only. No deposits or cash prizes.</p><div class="modalactions"><button class="btn" id="cancelBet" type="button">Cancel</button><button class="primary" id="confirmBet" type="button">Confirm bet</button></div></div></div>
+<!-- Profit/Loss result popup -->
+<div class="result-backdrop" id="resultBackdrop" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+  <div class="result-card" id="resultCard">
+    <div class="result-icon" id="resultIcon">🏆</div>
+    <div class="result-title" id="resultTitle">Congratulations!</div>
+    <div class="result-label">ROUND RESULT</div>
+    <div class="result-outcome">
+      <span class="result-chip" id="resultColor">AQUA</span>
+      <span class="result-chip" id="resultNumber">7</span>
+      <span class="result-chip" id="resultSize">BIG</span>
+    </div>
+    <div class="result-prize" id="resultPrize">
+      <div id="resultPrizeLabel">NET PROFIT</div>
+      <strong id="resultAmount">+0 virtual coins</strong>
+    </div>
+    <div class="result-period" id="resultPeriod"></div>
+    <div class="result-countdown" id="resultCountdown">3 seconds auto close</div>
+    <button class="result-close" id="resultClose" type="button">Close</button>
+  </div>
+</div>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
@@ -29,149 +67,60 @@ function clockInfo(){const seconds=Math.floor(Date.now()/1000);return{period:Mat
 function numberForPeriod(p){let x=(Math.imul((p+1)>>>0,1664525)+1013904223)>>>0;x^=x>>>16;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return x%10}
 function colorFor(n){return n===0||n===5?'Fuchsia':[1,3,7,9].includes(n)?'Aqua':'Gold'}
 function sizeFor(n){return n>=5?'Big':'Small'}
-function resultForPeriod(p){return{period:p,number:numberForPeriod(p),color:colorFor(numberForPeriod(p)),size:sizeFor(numberForPeriod(p)),stamp:new Date(p*30000).toISOString()}}
+function resultForPeriod(p){const n=numberForPeriod(p);return{period:p,number:n,color:colorFor(n),size:sizeFor(n),stamp:new Date(p*30000).toISOString()}}
 function status(s){$('status').textContent=s}
 function renderNumbers(){const root=$('numbers');root.replaceChildren();for(let n=0;n<=9;n++){const b=document.createElement('button');b.type='button';b.className='btn num '+colorFor(n).toLowerCase();b.dataset.market='number';b.dataset.val=String(n);b.textContent=String(n);root.appendChild(b)}}
 function keyOf(s){return s.market+'|'+s.val}
 function renderSelections(){document.querySelectorAll('[data-market]').forEach(b=>b.classList.toggle('selected',selections.some(s=>s.market===b.dataset.market&&s.val===b.dataset.val)));const count=selections.length;status(count?count+' selection(s) selected · '+stake+' coin(s) each.':'Choose a number, color, or Big/Small.')}
 function toggleSelection(button){const item={market:button.dataset.market,val:button.dataset.val};const i=selections.findIndex(s=>keyOf(s)===keyOf(item));if(i>=0)selections.splice(i,1);else selections.push(item);renderSelections()}
-function labelFor(b){return b.items.map(i=>(i.market==='number'?'Number ':i.market==='color'?'Color ':'')+i.val).join(', ')}
 function renderLedger(){const root=$('ledger');if(!bets.length){root.innerHTML='<div class="empty">No bets yet.</div>';return}root.innerHTML=bets.slice(0,50).map(b=>'<div class="ledgerrow"><span>'+escapeHtml(b.label)+'</span><span>'+b.cost+'</span><span class="'+(b.done?(b.net>=0?'good':'bad'):'muted')+'">'+(b.done?(b.net>=0?'+':'')+b.net+' coins':'Pending')+'</span></div>').join('')}
 function renderHistory(){const root=$('history');if(!results.length){root.innerHTML='<div class="empty">Waiting for first result…</div>';return}root.innerHTML=results.slice(0,12).map(r=>'<div class="historyrow"><span>'+r.period+'</span><strong>'+r.number+'</strong><span>'+r.color+'</span><span>'+r.size+'</span></div>').join('')}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function settle(period){let result=results.find(r=>r.period===period);if(!result){result=resultForPeriod(period);results.unshift(result);results=results.slice(0,100);save(KEYS.results,results)}lastResult=result;let changed=false,totalNet=0;bets.forEach(b=>{if(!b.done&&b.period===period){let payout=0;for(const item of b.items){const win=(item.market==='number'&&Number(item.val)===result.number)||(item.market==='color'&&item.val===result.color)||(item.market==='size'&&item.val===result.size);if(win)payout+=b.stake*2}b.done=true;b.number=result.number;b.color=result.color;b.size=result.size;b.payout=payout;b.net=payout-b.cost;balance+=payout;totalNet+=b.net;changed=true}});if(changed){save(KEYS.bets,bets);saveBalance();$('pl').innerHTML='<span class="'+(totalNet>=0?'good':'bad')+'">Round '+period+': '+(totalNet>=0?'+':'')+totalNet+' coins · result '+result.number+' / '+result.color+' / '+result.size+'</span>'}save(KEYS.results,results);renderHistory();renderLedger()}
-function updateClock(){const q=clockInfo();const t=String(q.remaining).padStart(2,'0');$('m1').textContent='0';$('m2').textContent='0';$('s1').textContent=t[0];$('s2').textContent=t[1];$('period').textContent='Round #'+q.period;$('roundState').textContent=q.remaining<=5?'Betting closed · result in '+q.remaining+'s':'Round live · betting closes in '+q.remaining+'s';if(lastPeriod===null){lastPeriod=q.period;results=results.filter(r=>r.period!==q.period);if(!results.length)renderHistory()}else if(q.period!==lastPeriod){settle(lastPeriod);lastPeriod=q.period;selections=[];renderSelections()}if(q.remaining===30){/* first tick of a new period is handled by period comparison */}}
+let resultPopupTimer=null,resultPopupInterval=null;
+function closeProfitLossPopup(){clearTimeout(resultPopupTimer);clearInterval(resultPopupInterval);const popup=$('resultBackdrop');if(popup)popup.classList.remove('show')}
+function showProfitLossPopup(data){
+  const won=data.net>0,lost=data.net<0;
+  clearTimeout(resultPopupTimer);clearInterval(resultPopupInterval);
+  $('resultCard').classList.toggle('loss',lost);
+  $('resultPrize').classList.toggle('loss-prize',lost);
+  $('resultIcon').textContent=won?'🏆':lost?'😔':'🤝';
+  $('resultTitle').textContent=won?'Congratulations!':lost?'Better Luck Next Time!':'Round Completed';
+  $('resultColor').textContent=data.result.color;
+  $('resultNumber').textContent=String(data.result.number);
+  $('resultSize').textContent=data.result.size;
+  $('resultPrizeLabel').textContent=won?'NET PROFIT':lost?'NET LOSS':'NET RESULT';
+  $('resultAmount').textContent=(data.net>0?'+':'')+data.net.toLocaleString('en-IN')+' virtual coins';
+  $('resultPeriod').textContent='Period: '+data.period+' | Total stake: '+data.stake+' | Payout: '+data.payout;
+  $('resultBackdrop').classList.add('show');
+  let seconds=3;
+  $('resultCountdown').textContent=seconds+' seconds auto close';
+  resultPopupInterval=setInterval(()=>{seconds--;if(seconds>0){$('resultCountdown').textContent=seconds+' seconds auto close'}else{clearInterval(resultPopupInterval);$('resultCountdown').textContent='Closing...'}},1000);
+  resultPopupTimer=setTimeout(closeProfitLossPopup,3000);
+}
+function settle(period){
+  let result=results.find(r=>r.period===period);
+  if(!result){result=resultForPeriod(period);results.unshift(result);results=results.slice(0,100);save(KEYS.results,results)}
+  lastResult=result;
+  let changed=false,totalNet=0,totalStake=0,totalPayout=0,winningSelections=0,losingSelections=0;
+  bets.forEach(b=>{
+    if(!b.done&&b.period===period){
+      let payout=0;
+      for(const item of b.items){
+        const win=(item.market==='number'&&Number(item.val)===result.number)||(item.market==='color'&&item.val===result.color)||(item.market==='size'&&item.val===result.size);
+        if(win){payout+=b.stake*2;winningSelections++}else{losingSelections++}
+      }
+      b.done=true;b.number=result.number;b.color=result.color;b.size=result.size;b.payout=payout;b.net=payout-b.cost;
+      balance+=payout;totalNet+=b.net;totalStake+=b.cost;totalPayout+=payout;changed=true;
+    }
+  });
+  if(changed){
+    save(KEYS.bets,bets);saveBalance();
+    $('pl').innerHTML='<span class="'+(totalNet>=0?'good':'bad')+'">Round '+period+': '+(totalNet>0?'+':'')+totalNet+' coins · result '+result.number+' / '+escapeHtml(result.color)+' / '+escapeHtml(result.size)+'</span>';
+    showProfitLossPopup({period,result,net:totalNet,stake:totalStake,payout:totalPayout,wins:winningSelections,losses:losingSelections});
+  }
+  save(KEYS.results,results);renderHistory();renderLedger();
+}
+function updateClock(){const q=clockInfo();const t=String(q.remaining).padStart(2,'0');$('m1').textContent='0';$('m2').textContent='0';$('s1').textContent=t[0];$('s2').textContent=t[1];$('period').textContent='Round #'+q.period;$('roundState').textContent=q.remaining<=5?'Betting closed · result in '+q.remaining+'s':'Round live · betting closes in '+q.remaining+'s';if(lastPeriod===null){lastPeriod=q.period;results=results.filter(r=>r.period!==q.period);if(!results.length)renderHistory()}else if(q.period!==lastPeriod){settle(lastPeriod);lastPeriod=q.period;selections=[];renderSelections()}}
 function openSheet(){if(!selections.length){status('First choose a number, color, or Big/Small.');return}const q=clockInfo();if(q.remaining<=5){status('Betting is closed for the last 5 seconds of this round.');return}const cost=stake*selections.length;if(cost>balance){status('Not enough virtual coins. Reduce stake or reset coins.');return}$('sheetTitle').textContent=selections.map(s=>(s.market==='number'?'Number ':s.market==='color'?'Color ':'')+s.val).join(' · ');$('sheetStake').textContent=stake+' coin(s)';$('sheetCount').textContent=String(selections.length);$('sheetTotal').textContent=cost+' coin(s)';$('sheetback').classList.add('show')}
 function closeSheet(){$('sheetback').classList.remove('show')}
-function confirmBet(){const q=clockInfo(),cost=stake*selections.length;if(q.remaining<=5||!selections.length||cost>balance){closeSheet();status('Bet not placed: check selection, timer, and balance.');return}balance-=cost;saveBalance();bets.unshift({id:Date.now(),period:q.period,items:selections.map(s=>({...s})),label:selections.map(s=>(s.market==='number'?'#':'')+s.val).join(', '),stake,cost,done:false,net:0});bets=bets.slice(0,100);save(KEYS.bets,bets);renderLedger();const p=q.period;closeSheet();selections=[];renderSelections();status('Virtual bet placed for round '+p+'.');}
-function refreshGame(){const q=clockInfo();if(lastPeriod!==null&&q.period!==lastPeriod)settle(lastPeriod);lastPeriod=q.period;updateClock();renderHistory();renderLedger();status('Game refreshed. Timer and round results are running.');}
-function resetCoins(){if(!confirm('Reset demo balance to 1000 virtual coins? This is a local demo reset.'))return;balance=1000;saveBalance();status('Virtual coins reset to 1000.')}
-function claimCoins(){const now=Date.now();let last=0;try{last=Number(localStorage.getItem(KEYS.lastFreeClaim))||0}catch(_){}const wait=24*60*60*1000;if(now-last<wait){const hours=Math.ceil((wait-(now-last))/3600000);status('Free coins already claimed. Try again in about '+hours+' hour(s).');return}balance+=1000;saveBalance();try{localStorage.setItem(KEYS.lastFreeClaim,String(now))}catch(_){}status('Success! 1000 free virtual coins added. You can claim again in 24 hours.');}
-function clearBets(){if(!confirm('Clear your local bet history? This will not refund stakes.'))return;bets=[];save(KEYS.bets,bets);renderLedger();status('Bet history cleared.')}
-function howTo(){alert('How to play: choose a number, color, or Big/Small; choose X1–X100; tap Place bet and Confirm bet. Bets close during the last 5 seconds. Each winning selection returns 2× its stake. This is a local virtual-coin demo; no cash or real-money betting.')}
-function logout(){try{localStorage.removeItem('supabase.auth.token');Object.keys(localStorage).filter(k=>k.startsWith('sb-')&&k.endsWith('-auth-token')).forEach(k=>localStorage.removeItem(k))}catch(_){}location.href='./auth.html'}
-function init(){renderNumbers();document.querySelectorAll('[data-market]').forEach(b=>b.addEventListener('click',()=>toggleSelection(b)));document.querySelectorAll('[data-stake]').forEach(b=>b.addEventListener('click',()=>{stake=Number(b.dataset.stake)||1;document.querySelectorAll('[data-stake]').forEach(x=>x.classList.toggle('selected',x===b));renderSelections()}));$('randomPick').addEventListener('click',()=>{const n=Math.floor(Math.random()*10);selections=[{market:'number',val:String(n)}];renderSelections()});$('place').addEventListener('click',openSheet);$('closeSheet').addEventListener('click',closeSheet);$('cancelBet').addEventListener('click',closeSheet);$('confirmBet').addEventListener('click',confirmBet);$('sheetback').addEventListener('click',e=>{if(e.target===$('sheetback'))closeSheet()});$('refreshHistory').addEventListener('click',refreshGame);$('claimCoins').addEventListener('click',claimCoins);$('resetCoins').addEventListener('click',resetCoins);$('clearBets').addEventListener('click',clearBets);$('howTo').addEventListener('click',howTo);$('logoutBtn').addEventListener('click',logout);saveBalance();renderSelections();renderLedger();renderHistory();lastPeriod=clockInfo().period;updateClock();setInterval(updateClock,250)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-})();
-/* Zyvro Profit/Loss Result Popup */
-.result-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(0,0,0,.78);
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-.result-backdrop.show {
-  display: flex;
-}
-
-.result-card {
-  width: 100%;
-  max-width: 390px;
-  overflow: hidden;
-  border-radius: 24px;
-  text-align: center;
-  background: linear-gradient(160deg,#ffb15a,#ff654f 65%,#ed394b);
-  color: white;
-  box-shadow: 0 20px 70px #0009;
-  animation: resultPop .3s ease-out;
-}
-
-.result-card.loss {
-  background: linear-gradient(160deg,#64748b,#334155 65%,#172033);
-}
-
-@keyframes resultPop {
-  from {
-    transform: scale(.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.result-icon {
-  width: 100px;
-  height: 100px;
-  margin: 20px auto 0;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 52px;
-  background: linear-gradient(145deg,#ffe6a0,#ffab20);
-  border: 6px solid #fff6;
-  box-shadow: 0 5px 18px #8b2b2555;
-}
-
-.result-title {
-  font-size: 30px;
-  font-weight: 950;
-  margin: 12px 8px;
-}
-
-.result-label {
-  font-size: 14px;
-  opacity: .9;
-}
-
-.result-outcome {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 14px;
-}
-
-.result-chip {
-  padding: 7px 13px;
-  border-radius: 10px;
-  background: #ffffff2b;
-  border: 1px solid #ffffff65;
-  font-weight: 850;
-}
-
-.result-prize {
-  background: #fff;
-  color: #e94f53;
-  margin: 20px 15px;
-  padding: 18px 8px;
-  border-radius: 16px;
-}
-
-.result-prize strong {
-  display: block;
-  font-size: 32px;
-  overflow-wrap: anywhere;
-}
-
-.result-prize.loss-prize {
-  color: #334155;
-}
-
-.result-period {
-  font-size: 12px;
-  color: #fff;
-  overflow-wrap: anywhere;
-  padding: 0 12px;
-}
-
-.result-countdown {
-  margin: 20px 0 8px;
-  font-size: 13px;
-}
-
-.result-close {
-  margin: 10px 0 22px;
-  border: 1px solid #ffffff88;
-  background: #ffffff22;
-  color: white;
-  padding: 10px 25px;
-  border-radius: 12px;
-  font-weight: 850;
-  }</script></body></html>
+function confirmBet(){const q=clockInfo(),cost=stake*selections.length;if(q.remaining<=5||!selections.length||cost>balance){closeSheet();status('Bet not placed: check selection, timer, and balance.');return}balance-=cost;saveBalance();bets.unshift({id:Date.now(),period:q.period,items:selections.map(s=>({...s})),label:selections.map(s=>(s.market==='number'?'#':'')+s.val).join(', '),stake,cost,done:false,net:0});bets=bets.slice(0,100);save(KEYS.bets,bets);renderLedger();const p=q.period;closeSheet();selections=[];renderSe
